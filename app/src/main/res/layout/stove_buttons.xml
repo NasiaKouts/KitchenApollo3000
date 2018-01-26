@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:id="@+id/plus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Press to increase the heat level by one each time you press"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@android:color/darker_gray"
+        app:iiv_icon="gmd-add_circle_outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/heat_level"
+        app:layout_constraintTop_toTopOf="@+id/minus" />
+
+    <TextView
+        android:id="@+id/heat_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondary_text"
+        android:textSize="24sp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/minus"
+        app:layout_constraintEnd_toStartOf="@+id/plus"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/minus"
+        app:layout_constraintTop_toBottomOf="@+id/minus"
+        android:text="0" />
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:id="@+id/minus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Press to decrease the heat level by one each time you press"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@android:color/darker_gray"
+        app:iiv_icon="gmd-remove_circle_outline"
+        app:layout_constraintEnd_toStartOf="@+id/heat_level"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/clock_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/minus"
+        app:layout_constraintStart_toEndOf="@+id/plus"
+        app:layout_constraintTop_toBottomOf="@+id/minus"
+        tools:text="5:10" />
+
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:id="@+id/alert"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Press to set an alert"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@android:color/darker_gray"
+        app:iiv_icon="gmd-add_alert"
+        app:layout_constraintEnd_toStartOf="@+id/minus"
+        app:layout_constraintStart_toEndOf="@+id/plus"
+        app:layout_constraintTop_toBottomOf="@+id/minus" />
+
+
+</android.support.constraint.ConstraintLayout>

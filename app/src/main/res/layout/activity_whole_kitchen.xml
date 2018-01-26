@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="aueb.nasia_kouts.gr.kitchenapollo.WholeKitchen">
+
+
+    <ImageButton
+        android:id="@+id/ib_kitchen_Up"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/stove"
+        android:scaleType="fitCenter"
+        android:onClick="openStoveActivity"
+        android:contentDescription="Press to open the stove options"
+        />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:padding="8dp"
+        android:background="@color/primary_dark"/>
+
+    <ImageButton
+        android:id="@+id/ib_oven"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/oven"
+        android:scaleType="fitCenter"
+        android:onClick="openOvenActivity"
+        android:contentDescription="Press to open the oven options"/>
+
+
+</LinearLayout>
