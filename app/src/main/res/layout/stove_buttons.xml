@@ -76,7 +76,7 @@
         app:iiv_background_color="@android:color/transparent"
         app:iiv_background_contour_color="@android:color/transparent"
         app:iiv_color="@android:color/darker_gray"
-        app:iiv_icon="gmd-add_alert"
+        app:iiv_icon="gmd-access_alarms"
         app:layout_constraintEnd_toStartOf="@+id/minus"
         app:layout_constraintStart_toEndOf="@+id/plus"
         app:layout_constraintTop_toBottomOf="@+id/minus" />
