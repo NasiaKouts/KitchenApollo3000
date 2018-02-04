@@ -9,17 +9,22 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikepenz.iconics.view.IconicsImageButton;
 
 import java.util.Locale;
 
-public class Stove extends AppCompatActivity {
+public class StoveActivity extends AppCompatActivity {
 
     ImageButton leftTopStove, rightTopStove, leftBottomStove, rightBottomStove;
     boolean[] isOpen = new boolean[4];
 
     TextToSpeech textToSpeechClient;
     int result;
+
+    View[] stoveControls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,7 @@ public class Stove extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        textToSpeechClient = new TextToSpeech(Stove.this, new TextToSpeech.OnInitListener() {
+        textToSpeechClient = new TextToSpeech(StoveActivity.this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
                 if(i == TextToSpeech.SUCCESS){
@@ -50,6 +55,26 @@ public class Stove extends AppCompatActivity {
         rightTopStove.setOnClickListener(new StoveOnClickListener());
         leftBottomStove.setOnClickListener(new StoveOnClickListener());
         rightBottomStove.setOnClickListener(new StoveOnClickListener());
+
+        stoveControls = new View[4];
+        stoveControls[0] = findViewById(R.id.buttons_leftup);
+        stoveControls[1] = findViewById(R.id.buttons_rightup);
+        stoveControls[2] = findViewById(R.id.buttons_leftbottom);
+        stoveControls[3] = findViewById(R.id.buttons_rightbottom);
+
+        for(int i = 0; i < stoveControls.length; i++){
+            TextView label = stoveControls[i].findViewById(R.id.heat_level);
+            label.setText("" + 0);
+
+            IconicsImageButton addButton = stoveControls[i].findViewById(R.id.plus);
+            addButton.setOnClickListener(new StoveControlsOnClickListener(i, true, label));
+
+            IconicsImageButton minusButton = stoveControls[i].findViewById(R.id.minus);
+            minusButton.setOnClickListener(new StoveControlsOnClickListener(i, false, label));
+
+            System.out.println(i);
+        }
+
     }
 
     private class StoveOnClickListener extends OnDoubleClickListener{
@@ -138,13 +163,27 @@ public class Stove extends AppCompatActivity {
         }
     }
 
-    private class StoveOnLongClickListener implements View.OnLongClickListener{
+    private class StoveControlsOnClickListener implements View.OnClickListener{
+        private boolean isAddition;
+        private TextView label;
+
+        public StoveControlsOnClickListener(int id, boolean isAddition, TextView label){
+            this.isAddition = isAddition;
+            this.label = label;
+        }
+
         @Override
-        public boolean onLongClick(View v) {
-            if(textToSpeechClient != null){
-                textToSpeechClient.speak(v.getContentDescription().toString(), TextToSpeech.QUEUE_FLUSH, null);
+        public void onClick(View view) {
+            int num = Integer.parseInt(label.getText().toString());
+            if(isAddition){
+                if(num < 9){
+                    label.setText("" + ++num);
+                }
+            }else{
+                if(num > 0){
+                    label.setText("" + --num);
+                }
             }
-            return true;
         }
     }
 
