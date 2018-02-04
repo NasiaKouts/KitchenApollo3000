@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="aueb.nasia_kouts.gr.kitchenapollo.OvenActivity"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <com.triggertrap.seekarc.SeekArc
+            android:id="@+id/temperature_controller"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:padding="30dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/horizontal_separator"
+            app:max="250"
+            app:progress="0"
+            app:rotation="180"
+            app:startAngle="30"
+            app:sweepAngle="300" />
+
+
+        <View
+            android:id="@+id/horizontal_separator"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 C"
+            android:textSize="@dimen/huge_font"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/info_seperator"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent" />
+
+        <View
+            android:id="@+id/info_seperator"
+            android:layout_width="100dp"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_purple"
+            app:layout_constraintBottom_toTopOf="@id/temperature_controller"
+            app:layout_constraintEnd_toStartOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/alertOven"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@android:color/darker_gray"
+            app:iiv_icon="gmd-access_alarms"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+        <TextView
+            android:id="@+id/mode_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="fan"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/imageView3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView5"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/imageView6"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView4"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/imageView5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/imageView4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>
