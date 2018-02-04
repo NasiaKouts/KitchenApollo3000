@@ -30,7 +30,12 @@ public class Stove extends AppCompatActivity {
         leftBottomStove = findViewById(R.id.ib_stove_leftbottom);
         rightBottomStove = findViewById(R.id.ib_stove_rightbottom);
 
+
+        leftTopStove.setOnClickListener(new StoveOnClickListener());
         rightTopStove.setOnClickListener(new StoveOnClickListener());
+        leftBottomStove.setOnClickListener(new StoveOnClickListener());
+        rightBottomStove.setOnClickListener(new StoveOnClickListener());
+
 
         rightTopStove.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
