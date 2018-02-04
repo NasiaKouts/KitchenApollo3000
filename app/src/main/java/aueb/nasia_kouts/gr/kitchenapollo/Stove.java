@@ -3,12 +3,14 @@ package aueb.nasia_kouts.gr.kitchenapollo;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -25,30 +27,22 @@ public class Stove extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stove);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         leftTopStove = findViewById(R.id.ib_stove_leftup);
         rightTopStove = findViewById(R.id.ib_stove_rightup);
         leftBottomStove = findViewById(R.id.ib_stove_leftbottom);
         rightBottomStove = findViewById(R.id.ib_stove_rightbottom);
-
 
         leftTopStove.setOnClickListener(new StoveOnClickListener());
         rightTopStove.setOnClickListener(new StoveOnClickListener());
         leftBottomStove.setOnClickListener(new StoveOnClickListener());
         rightBottomStove.setOnClickListener(new StoveOnClickListener());
 
-
-        rightTopStove.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                LayerDrawable twoStove = (LayerDrawable) ((ImageButton)v).getDrawable();
-                GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(R.id.outerStove1);
-                gradient.setGradientType(GradientDrawable.RADIAL_GRADIENT);
-                gradient.setGradientRadius(150);
-                gradient.setColors(new int[] {getResources().getColor(android.R.color.holo_red_light), getResources().getColor(android.R.color.holo_red_dark)});
-                //isRightTopOpen = true;
-                return true;
-            }
-        });
+        rightTopStove.setOnLongClickListener(new StoveOnLongClickListener());
+        leftBottomStove.setOnLongClickListener(new StoveOnLongClickListener());
 
     }
 
@@ -56,17 +50,17 @@ public class Stove extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             LayerDrawable twoStove = (LayerDrawable) ((ImageButton)v).getDrawable();
-            int pos = 0;
+            int pos = -1;
             switch (twoStove.getId(0)){
                 case R.id.stove1:{
                     pos = 0;
                     break;
                 }
-                case R.id.innerStove1: {
+                case R.id.outerStove1: {
                     pos = 1;
                     break;
                 }
-                case R.id.innerStove2:{
+                case R.id.outerStove2:{
                     pos = 2;
                     break;
                 }
@@ -74,16 +68,21 @@ public class Stove extends AppCompatActivity {
                     pos = 3;
                     break;
                 }
+
             }
+            System.out.println(pos);
+
+            int firstItem = 0;
+            if(pos == 1 || pos == 2) firstItem = 1;
 
             if(isOpen[pos]){
-                GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(0));
+                GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(firstItem));
                 gradient.setGradientType(GradientDrawable.RADIAL_GRADIENT);
                 gradient.setGradientRadius(150);
                 gradient.setColors(new int[] {getResources().getColor(android.R.color.transparent), getResources().getColor(android.R.color.transparent)});
 
                 if(pos == 1 || pos == 2){
-                    GradientDrawable gradient2 = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(1));
+                    GradientDrawable gradient2 = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(0));
                     gradient2.setGradientType(GradientDrawable.RADIAL_GRADIENT);
                     gradient2.setGradientRadius(150);
                     gradient2.setColors(new int[] {getResources().getColor(android.R.color.transparent), getResources().getColor(android.R.color.transparent)});
@@ -92,7 +91,7 @@ public class Stove extends AppCompatActivity {
                 isOpen[pos] = false;
             }
             else{
-                GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(0));
+                GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(firstItem));
                 gradient.setGradientType(GradientDrawable.RADIAL_GRADIENT);
                 gradient.setGradientRadius(150);
                 gradient.setColors(new int[] {getResources().getColor(android.R.color.holo_red_light), getResources().getColor(android.R.color.holo_red_dark)});
@@ -101,10 +100,45 @@ public class Stove extends AppCompatActivity {
         }
     }
 
+    private class StoveOnLongClickListener implements View.OnLongClickListener{
+        @Override
+        public boolean onLongClick(View v) {
+            LayerDrawable twoStove = (LayerDrawable) ((ImageButton)v).getDrawable();
+            int pos = 0;
+            switch (twoStove.getId(0)){
+                case R.id.stove1:{
+                    return true;
+                }
+                case R.id.outerStove1: {
+                    pos = 1;
+                    break;
+                }
+                case R.id.outerStove2:{
+                    pos = 2;
+                    break;
+                }
+                case R.id.stove2:{
+                    return true;
+                }
+            }
+            GradientDrawable gradient = (GradientDrawable)twoStove.findDrawableByLayerId(twoStove.getId(0));
+            gradient.setGradientType(GradientDrawable.RADIAL_GRADIENT);
+            gradient.setGradientRadius(150);
+            gradient.setColors(new int[] {getResources().getColor(android.R.color.holo_red_light), getResources().getColor(android.R.color.holo_red_dark)});
+            isOpen[pos] = true;
+            return true;
+        }
+    }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
