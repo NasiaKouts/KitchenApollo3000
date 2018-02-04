@@ -31,7 +31,7 @@ public class WholeKitchen extends AppCompatActivity {
     }
 
     public void openOvenActivity(View view) {
-        Intent openOvenIntent = new Intent(this, MainActivity.class);
+        Intent openOvenIntent = new Intent(this, OvenActivity.class);
         startActivity(openOvenIntent);
     }
 }

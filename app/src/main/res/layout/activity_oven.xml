@@ -12,18 +12,57 @@
         android:layout_height="0dp"
         android:layout_weight="2">
 
-        <com.triggertrap.seekarc.SeekArc
+        <TextView
+            android:paddingTop="16dp"
+            android:id="@+id/celcius"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\u2103"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toStartOf="@id/temperature_controller"
+            app:layout_constraintStart_toEndOf="@+id/temperature_controller"/>
+
+        <TextView
+            android:id="@+id/minuSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:layout_marginLeft="10dp"
+            android:textSize="35dp"
+            app:layout_constraintStart_toStartOf="@id/temperature_controller"
+            app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
+
+        <TextView
+            android:id="@+id/plusSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_marginRight="8dp"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toEndOf="@id/temperature_controller"
+            app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
+
+        <View
+            android:id="@+id/helper"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+
+            />
+        <aueb.nasia_kouts.gr.kitchenapollo.SeekArc
             android:id="@+id/temperature_controller"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:padding="30dp"
-            app:layout_constraintEnd_toStartOf="parent"
+            android:layout_marginLeft="40dp"
+            android:paddingLeft="30dp"
+            app:seekArc_max="250"
+            app:seekArc_rotation="180"
+            app:seekArc_startAngle="30"
+            app:seekArc_sweepAngle="300"
+            app:layout_constraintTop_toBottomOf="@id/celcius"
+            app:layout_constraintEnd_toEndOf="@id/helper"
             app:layout_constraintStart_toStartOf="@+id/horizontal_separator"
-            app:max="250"
-            app:progress="0"
-            app:rotation="180"
-            app:startAngle="30"
-            app:sweepAngle="300" />
+            app:seekArc_progress="0" />
 
 
         <View
@@ -38,9 +77,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 C"
+            android:text="0\u2103"
             android:textSize="@dimen/huge_font"
             android:textStyle="bold"
+            android:layout_marginLeft="20dp"
             app:layout_constraintBottom_toTopOf="@id/info_seperator"
             app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
             app:layout_constraintStart_toEndOf="parent" />
@@ -49,6 +89,7 @@
             android:id="@+id/info_seperator"
             android:layout_width="100dp"
             android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
             android:background="@android:color/holo_purple"
             app:layout_constraintBottom_toTopOf="@id/temperature_controller"
             app:layout_constraintEnd_toStartOf="@id/horizontal_separator"
@@ -60,6 +101,7 @@
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:layout_marginTop="8dp"
+            android:layout_marginLeft="20dp"
             android:background="@android:color/transparent"
             android:contentDescription="Press to set an alert"
             app:iiv_background_color="@android:color/transparent"
@@ -74,7 +116,7 @@
             android:id="@+id/mode_selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="fan"
             android:textSize="@dimen/huge_font"
             app:layout_constraintEnd_toStartOf="parent"
@@ -86,7 +128,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon2"
             app:layout_constraintEnd_toStartOf="@+id/imageView"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread"
@@ -98,7 +140,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon3"
             app:layout_constraintEnd_toStartOf="@+id/imageView3"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
@@ -109,7 +151,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon7"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView5"
@@ -120,7 +162,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon1"
             app:layout_constraintEnd_toStartOf="@+id/imageView6"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
@@ -131,7 +173,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon5"
             app:layout_constraintEnd_toStartOf="@+id/imageView5"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView3"
@@ -142,13 +184,51 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
+            android:src="@drawable/icon4"
             app:layout_constraintEnd_toStartOf="@+id/imageView4"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+        
+        <View
+            android:id="@+id/oven_seperator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_purple"
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            android:layout_marginTop="16dp"/>
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/oven_seperator">
 
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/oven_cropped"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                />
+
+            <com.mikepenz.iconics.view.IconicsImageButton
+                android:id="@+id/camera"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Press to see the oven inside camera view"
+                app:iiv_background_color="@android:color/transparent"
+                app:iiv_background_contour_color="@android:color/transparent"
+                app:iiv_color="@android:color/holo_green_dark"
+                app:iiv_icon="gmd-play_circle_outline"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
 
