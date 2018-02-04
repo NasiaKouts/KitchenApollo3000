@@ -32,12 +32,12 @@ public class OvenActivity extends AppCompatActivity {
         ovenModesImageView = new ImageView[6];
         ovenModesImageView[0] = findViewById(R.id.light_mode);
         ovenModesImageView[1] = findViewById(R.id.fan_mode);
-        ovenModesImageView[2] = findViewById(R.id.unfreeze_mode);
-        ovenModesImageView[3] = findViewById(R.id.grill_bottom_heat_mode);
-        ovenModesImageView[4] = findViewById(R.id.full_heat_mode);
-        ovenModesImageView[5] = findViewById(R.id.bottom_heat_mode);
+        ovenModesImageView[2] = findViewById(R.id.bottom_heat_mode);
+        ovenModesImageView[3] = findViewById(R.id.full_heat_mode);
+        ovenModesImageView[4] = findViewById(R.id.grill_bottom_heat_mode);
+        ovenModesImageView[5] = findViewById(R.id.unfreeze_mode);
 
-        for(int i = 0; i < ovenModesImageView.length - 1; i++){
+        for(int i = 0; i < ovenModesImageView.length; i++){
             ovenModesImageView[i].setOnClickListener(new OvenModeOnClickListener());
         }
 
@@ -77,7 +77,7 @@ public class OvenActivity extends AppCompatActivity {
             modeSelectedTextView.setText(R.string.oven_closed);
         }else{
             int pos = -1;
-            for(int i = 0; i < ovenModesImageView.length - 1; i++){
+            for(int i = 0; i < ovenModesImageView.length; i++){
                 if(ovenModesImageView[i].getId() == openedMode.getId()){
                     pos = i;
                     break;
