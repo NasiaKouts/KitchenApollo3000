@@ -74,7 +74,7 @@ public class WholeKitchen extends AppCompatActivity {
 
 
     public void openStoveActivity(View view) {
-        Intent openStoveIntent = new Intent(this, Stove.class);
+        Intent openStoveIntent = new Intent(this, StoveActivity.class);
         startActivity(openStoveIntent);
     }
 

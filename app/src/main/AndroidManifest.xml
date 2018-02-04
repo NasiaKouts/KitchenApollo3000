@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Stove"
+            android:name=".StoveActivity"
             android:label="@string/title_activity_stove"
             android:parentActivityName=".WholeKitchen">
             <meta-data
