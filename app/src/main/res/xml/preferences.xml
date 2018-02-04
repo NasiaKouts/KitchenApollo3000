@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="userName"
+        android:title="Name"
+        android:summary="Enter your name to let our assistant get to know you"
+        android:dialogTitle="Your Name"
+        android:dialogMessage="Enter your name bellow"
+        android:defaultValue=" "
+        android:inputType="textCapWords"/>
+
+    <CheckBoxPreference
+        android:key="speechEnabled"
+        android:summary="check this option in order to be able to speak your commands, instead of clicking on buttons"
+        android:title="Enable Speech Assist"
+        android:defaultValue="true"/>
+
+    <PreferenceCategory
+        android:title="Pre select Auto-close"
+        android:key="autoClose"
+        android:summary="You can alter this everytime you set a new timer">
+
+        <CheckBoxPreference
+            android:key="autoCloseStoves"
+            android:summary="check this option in order to make stoves auto close when you set a timer, and its been reached."
+            android:title="Set pre selected Auto-close on Stoves"/>
+
+        <CheckBoxPreference
+            android:key="autoCloseOven"
+            android:summary="check this option in order to make oven auto close when you set a timer, and its been reached."
+            android:title="Set pre selected Auto-close on Oven"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
