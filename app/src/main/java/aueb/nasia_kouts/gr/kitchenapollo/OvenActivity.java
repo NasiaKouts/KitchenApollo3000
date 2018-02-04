@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.triggertrap.seekarc.SeekArc;
 
 public class OvenActivity extends AppCompatActivity {
+
     SeekArc ovenTemp;
 
     @Override
@@ -19,7 +20,7 @@ public class OvenActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-       // ovenTemp.setOnSeekArcChangeListener();
+        // ovenTemp.setOnSeekArcChangeListener();
     }
 
     @Override
