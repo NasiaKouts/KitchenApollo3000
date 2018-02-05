@@ -281,7 +281,7 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
     private class OvenAlarmOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            if(ovenTemp == null) {
+            if(modeSelectedTextView.getText().equals(R.string.oven_closed)) {
                 Toast.makeText(getApplicationContext(), "You must select a mode to set an alarm!", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -297,7 +297,7 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
     private class OvenEditAlarmOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            if(ovenTemp == null) {
+            if(modeSelectedTextView.getText().equals(R.string.oven_closed)) {
                 Toast.makeText(getApplicationContext(), "You must select a mode to set an alarm!", Toast.LENGTH_LONG).show();
                 return;
             }
