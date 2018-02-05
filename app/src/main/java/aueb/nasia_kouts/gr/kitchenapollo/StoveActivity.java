@@ -49,16 +49,16 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
         setUpSharedPreferences();
 
-        textToSpeechClient = new TextToSpeech(StoveActivity.this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if(i == TextToSpeech.SUCCESS){
-                    result = textToSpeechClient.setLanguage(Locale.US);
-                }else{
-                    Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+//        textToSpeechClient = new TextToSpeech(StoveActivity.this, new TextToSpeech.OnInitListener() {
+//            @Override
+//            public void onInit(int i) {
+//                if(i == TextToSpeech.SUCCESS){
+//                    result = textToSpeechClient.setLanguage(Locale.US);
+//                }else{
+//                    Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
 
         stoveButtons = new StoveButton[4];
         for(int i = 0; i < stoveButtons.length; i++){

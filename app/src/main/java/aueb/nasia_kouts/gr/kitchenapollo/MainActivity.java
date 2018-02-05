@@ -1,47 +1,45 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+import static android.content.ContentValues.TAG;
 
-    private static final String TAG = MainActivity.class.getName();
+public class MainActivity extends Activity{
 
-    //wakelock to keep screen on
-    protected PowerManager.WakeLock mWakeLock;
-
-    //speach recognizer for callbacks
-    private SpeechRecognizer mSpeechRecognizer;
-
-    //handler to post changes to progress bar
-    private Handler mHandler = new Handler();
-
-    //ui textview
     TextView responseText;
 
-    //intent for speech recogniztion
-    Intent mSpeechIntent;
+    private SpeechRecognizer mSpeechRecognizer;
+    private Intent mSpeechRecognizerIntent;
+    private boolean mIslistening,performingSpeechSetup;
 
-    //this bool will record that it's time to kill P.A.L.
-    boolean killCommanded = false;
+    private TextToSpeech toSpeech;
 
+    private String result;
+    private String[] commands = {"start stove", "start oven"};
+    // responses to commands
+    private String[] responses = {"Starting the stove", "Starting the oven", "I'm sorry i can't do that"};
     //legel commands
     private static final String[] VALID_COMMANDS = {
             "what time is it",
@@ -56,104 +54,164 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        responseText = (TextView) findViewById(R.id.TestingText);
-    }
+        responseText = findViewById(R.id.TestingText);
 
-    @Override
-    protected void onStart() {
+
+        // This is for getting the input
+        requestRecordAudioPermission();
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
-        mSpeechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        // Given an hint to the recognizer about what the user is going to say
-        mSpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        mSpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
-        // Specify how many results you want to receive. The results will be sorted
-        // where the first result is the one with higher confidence.
-//        mSpeechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 20);
-//
-//
-//        mSpeechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        SpeechRecognitionListener listener = new SpeechRecognitionListener();
+        mSpeechRecognizer.setRecognitionListener(listener);
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
-        //aqcuire the wakelock to keep the screen on until user exits/closes app
-        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
-        this.mWakeLock.acquire();
-        startActivityForResult(mSpeechIntent,10);
-        super.onStart();
+        // this is for reading the input
+
     }
+
+
+
+
+    public void StartListening(View view){
+    }
+
+    public void StopListening(View view){
+        mSpeechRecognizer.destroy();
+    }
+
+
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
+    public void onBackPressed() {
+        super.onBackPressed();
+        mSpeechRecognizer.destroy();
     }
-    private String getResponse(int command){
-        Calendar c = Calendar.getInstance();
 
-        String retString =  "I'm sorry, Dave. I'm afraid I can't do that.";
-        SimpleDateFormat dfDate_day;
-        switch (command) {
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSpeechRecognizer.destroy();
+    }
+
+
+    private void requestRecordAudioPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String requiredPermission = Manifest.permission.RECORD_AUDIO;
+
+            // If the user previously denied this permission then show a message explaining why
+            // this permission is needed
+            if (checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions(new String[]{requiredPermission}, 101);
+            }
+        }
+    }
+
+    protected class SpeechRecognitionListener implements RecognitionListener
+    {
+
+        @Override
+        public void onBeginningOfSpeech()
+        {
+            Log.d(TAG, "onBeginingOfSpeech");
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer)
+        {
+
+        }
+
+        @Override
+        public void onEndOfSpeech()
+        {
+            Log.d(TAG, "onEndOfSpeech");
+        }
+
+        @Override
+        public void onError(int error)
+        {
+            if (performingSpeechSetup && error == SpeechRecognizer.ERROR_NO_MATCH) return;
+            mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+            Log.d(TAG, "error = " + error);
+
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params)
+        {
+
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults)
+        {
+
+        }
+
+        @Override
+        public void onReadyForSpeech(Bundle params)
+        {
+            Log.d(TAG, "onReadyForSpeech"); //$NON-NLS-1$
+        }
+
+        @Override
+        public void onResults(Bundle results)
+        {
+            Log.d(TAG, "onResults"); //$NON-NLS-1$
+            ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            // matches are the return values of speech recognition engine
+            // Use these values for whatever you wish to do
+            responseText.setText(matches.get(0));
+            result = matches.get(0);
+            // TODO: 5/2/2018 Here is where you pass the result of the speech
+            checkCommands(result);
+            mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB)
+        {
+        }
+    }
+
+    public void checkCommands(String result){
+        int index = isValidCommand(result);
+        // Here it speaks
+        if ( index != -1){
+            toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, null);
+        }else{
+            index = responses.length -1;
+            toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, null);
+        }
+        runCommands(index);
+    }
+
+    public void runCommands(int index){
+        switch (index){
             case 0:
-                dfDate_day= new SimpleDateFormat("HH:mm:ss");
-                retString = "The time is " + dfDate_day.format(c.getTime());
-                break;
-            case 1:
-                dfDate_day = new SimpleDateFormat("dd/MM/yyyy");
-                retString= " Today is " + dfDate_day.format(c.getTime());
-                break;
-            case 2:
-                retString = "My name is R.A.L. - Responsive Android Language program";
-                break;
 
-            case 3:
-                killCommanded = true;
                 break;
-
             default:
                 break;
         }
-        return retString;
     }
 
-    @Override
-    protected void onPause() {
-        //kill the voice recognizer
-        if(mSpeechRecognizer != null){
-            mSpeechRecognizer.destroy();
-            mSpeechRecognizer = null;
-
-        }
-        this.mWakeLock.release();
-        super.onPause();
-    }
-
-    private void processCommand(ArrayList<String> matchStrings){
-        String response = "I'm sorry, Dave. I'm afraid I can't do that.";
-        int maxStrings = matchStrings.size();
-        boolean resultFound = false;
-        for(int i =0; i < VALID_COMMANDS_SIZE && !resultFound;i++){
-            for(int j=0; j < maxStrings && !resultFound; j++){
-                response = getResponse(i);
+    public int isValidCommand(String result){
+        int index = -1;
+        int i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(result)){
+                index = i;
             }
+            i++;
         }
-
-        final String finalResponse = response;
-        mHandler.post(new Runnable() {
-            public void run() {
-                responseText.setText(finalResponse);
-            }
-        });
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case 10:
-                if(resultCode == RESULT_OK && data!= null){
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                }
-                break;
-        }
+        return index;
     }
 }
