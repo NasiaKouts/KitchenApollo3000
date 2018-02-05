@@ -61,7 +61,8 @@ public class WholeKitchen extends AppCompatActivity {
                         null);
             }
         }else if(item.getItemId() == R.id.settings_button){
-            //goto settings acticity
+            Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(openSettingsIntent);
         }
         return true;
     }

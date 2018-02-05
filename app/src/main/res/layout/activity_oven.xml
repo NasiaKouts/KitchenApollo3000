@@ -108,7 +108,7 @@
             android:contentDescription="Press to set an alert"
             app:iiv_background_color="@android:color/transparent"
             app:iiv_background_contour_color="@android:color/transparent"
-            app:iiv_color="@android:color/darker_gray"
+            app:iiv_color="@color/accent"
             app:iiv_icon="gmd-access_alarms"
             app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
             app:layout_constraintStart_toEndOf="parent"

@@ -5,8 +5,7 @@
         android:key="userName"
         android:title="Name"
         android:summary="Enter your name to let our assistant get to know you"
-        android:dialogTitle="Your Name"
-        android:dialogMessage="Enter your name bellow"
+        android:dialogTitle="Enter your name"
         android:defaultValue=" "
         android:inputType="textCapWords"/>
 
@@ -24,12 +23,11 @@
         <CheckBoxPreference
             android:key="autoCloseStoves"
             android:summary="check this option in order to make stoves auto close when you set a timer, and its been reached."
-            android:title="Set pre selected Auto-close on Stoves"/>
-
+            android:title="Auto-close on Stoves"/>
         <CheckBoxPreference
             android:key="autoCloseOven"
             android:summary="check this option in order to make oven auto close when you set a timer, and its been reached."
-            android:title="Set pre selected Auto-close on Oven"/>
+            android:title="Auto-close on Oven"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

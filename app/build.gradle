@@ -38,4 +38,5 @@ dependencies {
     implementation 'com.mikepenz:google-material-typeface:3.0.1.2.original@aar'
     implementation 'com.mikepenz:material-design-iconic-typeface:2.2.0.4@aar'
     implementation 'com.mikepenz:fontawesome-typeface:4.7.0.2@aar'
+    implementation 'com.android.support:preference-v7:26.1.0'
 }
