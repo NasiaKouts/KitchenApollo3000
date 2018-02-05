@@ -208,6 +208,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
         final NumberPicker picker = viewInflated.findViewById(R.id.number_picker);
         final CheckBox closeStoveStoveAfter = viewInflated.findViewById(R.id.close_stove_after_time);
+        closeStoveStoveAfter.setText("Close stove when time exceed");
 
         picker.setValue(startValue);
 
@@ -269,6 +270,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
                                 mNotifyMgr.notify(001, mBuilder.build());
 
                                 textView.setVisibility(View.GONE);
+                                stopAlertButton.setVisibility(View.GONE);
                                 alertButton.setVisibility(View.VISIBLE);
                             }
                         }.start();
