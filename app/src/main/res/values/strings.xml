@@ -18,9 +18,9 @@
     <string name="stove_right_top_big_opened">Right top big stove opened</string>
     <string name="stove_right_top_closed">Right top stove closed</string>
 
-    <string name="stove_left_bottom_opened">Left top stove opened</string>
+    <string name="stove_left_bottom_opened">Left bottom stove opened</string>
     <string name="stove_left_bottom_big_opened">Left bottom big stove opened</string>
-    <string name="stove_left_bottom_closed">Left top stove closed</string>
+    <string name="stove_left_bottom_closed">Left bottom stove closed</string>
 
     <string name="stove_right_bottom_opened">Right bottom stove opened</string>
     <string name="stove_right_bottom_closed">Right bottom stove closed</string>
