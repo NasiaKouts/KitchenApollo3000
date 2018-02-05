@@ -22,6 +22,7 @@ import com.mikepenz.iconics.view.IconicsImageButton;
 import com.travijuu.numberpicker.library.NumberPicker;
 
 import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 public class StoveActivity extends AppCompatActivity {
@@ -91,7 +92,6 @@ public class StoveActivity extends AppCompatActivity {
             stoveButtons[i].setHeatLevel(0);
 
             TextView label = stoveButtons[i].getControls().findViewById(R.id.heat_level);
-            label.setOnClickListener(new StoveTextViewAlertOnClickListener(stoveButtons[i]));
 
             IconicsImageButton addButton = stoveButtons[i].getControls().findViewById(R.id.plus);
             addButton.setOnClickListener(new StoveControlsOnClickListener(stoveButtons[i], true, label));
@@ -101,6 +101,12 @@ public class StoveActivity extends AppCompatActivity {
 
             IconicsImageButton alertButton = stoveButtons[i].getControls().findViewById(R.id.alert);
             alertButton.setOnClickListener(new StoveAlertOnClickListener(stoveButtons[i]));
+
+            IconicsImageButton stopAlertButton = stoveButtons[i].getControls().findViewById(R.id.stop_alert);
+            stopAlertButton.setOnClickListener(new StoveStopAlertOnClickListener(stoveButtons[i]));
+
+            TextView cdTimer = stoveButtons[i].getControls().findViewById(R.id.clock_alert);
+            cdTimer.setOnClickListener(new StoveTextViewAlertOnClickListener(stoveButtons[i]));
         }
 
         countDownTimers = new CountDownTimer[4];
@@ -139,18 +145,22 @@ public class StoveActivity extends AppCompatActivity {
 
         if(countDownTimers[stoveButton.getPosition()] != null){
             countDownTimers[stoveButton.getPosition()].cancel();
+            IconicsImageButton alertButton = stoveButton.getControls().findViewById(R.id.alert);
+            IconicsImageButton stopAlertButton = stoveButton.getControls().findViewById(R.id.stop_alert);
+            TextView textView = stoveButton.getControls().findViewById(R.id.clock_alert);
+            alertButton.setVisibility(View.VISIBLE);
+            stopAlertButton.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
         }
 
         String msg = stoveButton.getStringFromStove(stoveButton.getPosition(), stoveButton.isOpened(), false);
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void openAlertCountDownBuilder(final StoveButton stoveButton){
+    private void openAlertCountDownBuilder(final StoveButton stoveButton, final int startValue, final boolean openForEdit){
         final IconicsImageButton alertButton = stoveButton.getControls().findViewById(R.id.alert);
+        final IconicsImageButton stopAlertButton = stoveButton.getControls().findViewById(R.id.stop_alert);
         final TextView textView = stoveButton.getControls().findViewById(R.id.clock_alert);
-
-        alertButton.setVisibility(View.GONE);
-        textView.setVisibility(View.VISIBLE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(StoveActivity.this);
         builder.setTitle("Set a notification for the " + stoveButton.getOrientationName() + " stove:");
@@ -161,14 +171,38 @@ public class StoveActivity extends AppCompatActivity {
         final NumberPicker picker = viewInflated.findViewById(R.id.number_picker);
         final CheckBox closeStoveStoveAfter = viewInflated.findViewById(R.id.close_stove_after_time);
 
+        picker.setValue(startValue);
+
         builder.setView(viewInflated);
 
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
                 alertMinutes = picker.getValue();
                 textView.setTextColor(getResources().getColor(R.color.accent));
+
+                if(openForEdit){
+                    if(alertMinutes == startValue){
+                        return;
+                    }
+
+                    countDownTimers[stoveButton.getPosition()].cancel();
+                    alertButton.setVisibility(View.VISIBLE);
+                    stopAlertButton.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                }
+
+                alertButton.setVisibility(View.GONE);
+                stopAlertButton.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
+
+                dialog.dismiss();
+
+                if(openForEdit){
+                    Toast.makeText(getApplicationContext(), "The notification for " + stoveButton.getOrientationName() + " stove has successfully updated!", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "The notification for " + stoveButton.getOrientationName() + " stove has successfully enabled!", Toast.LENGTH_LONG).show();
+                }
 
                 countDownTimers[stoveButton.getPosition()] =
                         new CountDownTimer(TimeUnit.MINUTES.toMillis(alertMinutes), 1000) {
@@ -192,13 +226,9 @@ public class StoveActivity extends AppCompatActivity {
                                                 .setContentTitle("Time is up")
                                                 .setContentText("Time exceed for the " + stoveButton.getOrientationName() + " stove");
 
-                                // Sets an ID for the notification
-                                int mNotificationId = 001;
-                                // Gets an instance of the NotificationManager service
                                 NotificationManager mNotifyMgr =
                                         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                // Builds the notification and issues it.
-                                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                                mNotifyMgr.notify(001, mBuilder.build());
 
                                 textView.setVisibility(View.GONE);
                                 alertButton.setVisibility(View.VISIBLE);
@@ -317,10 +347,16 @@ public class StoveActivity extends AppCompatActivity {
 
         @Override
         public void onClick(final View view) {
-            if(!stoveButton.isOpened()) return;
-            if(stoveButton.getHeatLevel() == 0) return;
+            if(!stoveButton.isOpened()) {
+                Toast.makeText(getApplicationContext(), "The " + stoveButton.getOrientationName() + " stove must be opened to set an alarm!", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if(stoveButton.getHeatLevel() == 0) {
+                Toast.makeText(getApplicationContext(), "The " + stoveButton.getOrientationName() + " stove must have a heat level to set an alarm!", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-            openAlertCountDownBuilder(stoveButton);
+            openAlertCountDownBuilder(stoveButton, 1, false);
         }
     }
 
@@ -334,7 +370,31 @@ public class StoveActivity extends AppCompatActivity {
             if(!stoveButton.isOpened()) return;
             if(stoveButton.getHeatLevel() == 0) return;
 
-            openAlertCountDownBuilder(stoveButton);
+            TextView textView = stoveButton.getControls().findViewById(R.id.clock_alert);
+
+            StringTokenizer tokenizer = new StringTokenizer(textView.getText().toString(), ":");
+            openAlertCountDownBuilder(stoveButton, Integer.parseInt(tokenizer.nextToken()), true);
+        }
+    }
+
+    private class StoveStopAlertOnClickListener implements View.OnClickListener{
+        private StoveButton stoveButton;
+
+        private StoveStopAlertOnClickListener(StoveButton stoveButton){ this.stoveButton = stoveButton; }
+
+        @Override
+        public void onClick(final View view) {
+            if(countDownTimers[stoveButton.getPosition()] != null){
+                countDownTimers[stoveButton.getPosition()].cancel();
+                IconicsImageButton alertButton = stoveButton.getControls().findViewById(R.id.alert);
+                IconicsImageButton stopAlertButton = stoveButton.getControls().findViewById(R.id.stop_alert);
+                TextView textView = stoveButton.getControls().findViewById(R.id.clock_alert);
+                alertButton.setVisibility(View.VISIBLE);
+                stopAlertButton.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+
+                Toast.makeText(getApplicationContext(), "The notification for " + stoveButton.getOrientationName() + " stove has successfully disabled!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
