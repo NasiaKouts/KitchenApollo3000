@@ -85,9 +85,15 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
