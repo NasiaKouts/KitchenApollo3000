@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="40dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <EditText
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:text="0"
+        android:textColor="@android:color/black"
+        android:inputType="number"
+        android:id="@+id/display"
+        android:gravity="center"
+        />
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:id="@+id/increment_alert"
+        android:background="@android:color/transparent"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@color/accent"
+        app:iiv_icon="gmd-add"/>
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:id="@+id/decrement_alert"
+        android:background="@android:color/transparent"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@color/accent"
+        app:iiv_icon="gmd-remove"/>
+
+</LinearLayout>

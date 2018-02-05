@@ -13,6 +13,7 @@ public class StoveButton extends android.support.v7.widget.AppCompatImageButton 
     private int heatLevel;
     private boolean isOpened;
     private boolean isBigStoveOpened;
+    private String orientationName;
     private View controls;
 
     public StoveButton(Context context) {
@@ -137,6 +138,14 @@ public class StoveButton extends android.support.v7.widget.AppCompatImageButton 
             gradient.setColors(new int[] {getResources().getColor(android.R.color.holo_red_light), getResources().getColor(android.R.color.holo_red_dark)});
             isOpened = true;
         }
+    }
+
+    public String getOrientationName() {
+        return orientationName;
+    }
+
+    public void setOrientationName(String orientationName) {
+        this.orientationName = orientationName;
     }
 
     public View getControls() {
