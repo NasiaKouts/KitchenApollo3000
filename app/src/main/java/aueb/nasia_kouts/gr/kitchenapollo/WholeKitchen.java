@@ -73,7 +73,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             prefEditor.putBoolean("speechAssist", speechEnabled);
             prefEditor.apply();
 
-            if(speechEnabled != speechEnabled){
+            if(speechEnabledOld != speechEnabled){
                 if(speechEnabled){
                     Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
                     //TODO ?

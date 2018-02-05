@@ -1,5 +1,6 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -107,7 +108,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             prefEditor.putBoolean("speechAssist", speechEnabled);
             prefEditor.apply();
 
-            if(speechEnabled != speechEnabled){
+            if(speechEnabledOld != speechEnabled){
                 if(speechEnabled){
                     Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
                     //TODO ?
@@ -255,6 +256,10 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         switch (item.getItemId()) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.settings_button:
+                Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(openSettingsIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
