@@ -115,6 +115,38 @@
             app:layout_constraintTop_toBottomOf="@id/info_seperator" />
 
         <TextView
+            android:id="@+id/clock_oven_alert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/huge_font"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/close_oven_alarm"
+            android:visibility="gone"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@color/accent"
+            app:iiv_icon="gmd-alarm_off"
+            app:layout_constraintEnd_toEndOf="@id/clock_oven_alert"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+        <TextView
             android:id="@+id/mode_selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
