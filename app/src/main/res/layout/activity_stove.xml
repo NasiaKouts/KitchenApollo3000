@@ -9,7 +9,7 @@
     tools:layout_editor_absoluteY="25dp">
 
 
-    <ImageButton
+    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
         android:id="@+id/ib_stove_leftup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toBottomOf="@+id/ib_stove_rightup"
         app:srcCompat="@drawable/circle_one_stove" />
 
-    <ImageButton
+    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
         android:id="@+id/ib_stove_rightup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="parent" />
 
-    <ImageButton
+    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
         android:id="@+id/ib_stove_leftbottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
         app:srcCompat="@drawable/circle_two_stove_2"
         android:contentDescription="Tap to open the inner ring at the bottom left corner. Double tap to open the outer ring"/>
 
-    <ImageButton
+    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
         android:id="@+id/ib_stove_rightbottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
