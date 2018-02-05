@@ -1,6 +1,8 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +17,7 @@ import com.mikepenz.iconics.view.IconicsImageButton;
 
 import java.util.Locale;
 
-public class StoveActivity extends AppCompatActivity {
+public class StoveActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     StoveButton stoveButtons[];
 
@@ -30,6 +32,8 @@ public class StoveActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        setUpSharedPreferences();
 
         textToSpeechClient = new TextToSpeech(StoveActivity.this, new TextToSpeech.OnInitListener() {
             @Override
@@ -82,6 +86,39 @@ public class StoveActivity extends AppCompatActivity {
             IconicsImageButton minusButton = stoveButtons[i].getControls().findViewById(R.id.minus);
             minusButton.setOnClickListener(new StoveControlsOnClickListener(stoveButtons[i], false, label));
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        setUpSharedPreferences();
+    }
+
+    private  void setUpSharedPreferences(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
+        boolean openedFirstTime = sharedPref.getBoolean("openedFirstTime", false);
+
+        if(openedFirstTime){
+            boolean speechEnabledOld = sharedPref.getBoolean("speechAssist", true);
+            boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+
+            SharedPreferences.Editor prefEditor = sharedPref.edit();
+            prefEditor.putBoolean("speechAssist", speechEnabled);
+            prefEditor.apply();
+
+            if(speechEnabled != speechEnabled){
+                if(speechEnabled){
+                    Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
+                    //TODO ?
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
+        sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
     }
 
     private void openStove(StoveButton stoveButton){

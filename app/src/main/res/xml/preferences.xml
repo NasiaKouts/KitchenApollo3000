@@ -2,32 +2,34 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:key="userName"
-        android:title="Name"
-        android:summary="Enter your name to let our assistant get to know you"
-        android:dialogTitle="Enter your name"
+        android:key="@string/pref_name_key"
+        android:title="@string/pref_name_title"
+        android:summary="@string/pref_name_summary"
+        android:dialogTitle="@string/pref_name_dialog_title"
         android:defaultValue=" "
         android:inputType="textCapWords"/>
 
     <CheckBoxPreference
-        android:key="speechEnabled"
-        android:summary="check this option in order to be able to speak your commands, instead of clicking on buttons"
-        android:title="Enable Speech Assist"
+        android:key="@string/pref_speech_enabled_key"
+        android:summary="@string/pref_speech_enabled_summary"
+        android:title="@string/pref_speech_enabled_title"
         android:defaultValue="true"/>
 
     <PreferenceCategory
-        android:title="Pre select Auto-close"
-        android:key="autoClose"
-        android:summary="You can alter this everytime you set a new timer">
+        android:title="@string/pref_auto_close_category_title"
+        android:key="@string/pref_auto_close_category_key"
+        android:summary="@string/pref_auto_close_category_summary">
 
         <CheckBoxPreference
-            android:key="autoCloseStoves"
-            android:summary="check this option in order to make stoves auto close when you set a timer, and its been reached."
-            android:title="Auto-close on Stoves"/>
+            android:key="@string/pref_auto_close_stoves_key"
+            android:summary="@string/pref_auto_close_stoves_summary"
+            android:title="@string/pref_auto_close_stoves_title"
+            android:defaultValue="false"/>
         <CheckBoxPreference
-            android:key="autoCloseOven"
-            android:summary="check this option in order to make oven auto close when you set a timer, and its been reached."
-            android:title="Auto-close on Oven"/>
+            android:key="@string/pref_auto_close_oven_key"
+            android:summary="@string/pref_auto_close_oven_summary"
+            android:title="@string/pref_auto_close_oven_title"
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
