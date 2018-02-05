@@ -28,15 +28,4 @@ public class SpeechAPI {
     private TextToSpeech toSpeech;
     private int result;
     private String health;
-    public SpeechAPI(TextToSpeech toSpeech){
-        this.toSpeech = toSpeech;
-    }
-
-    public void readInput(String input){
-        toSpeech.speak(input, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    public void stopReading(){
-        toSpeech.stop();
-    }
 }

@@ -3,24 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <com.mikepenz.iconics.view.IconicsImageButton
-        android:id="@+id/minus"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Press to decrease the heat level by one each time you press"
-        app:iiv_background_color="@android:color/transparent"
-        app:iiv_background_contour_color="@android:color/transparent"
-        app:iiv_color="@android:color/darker_gray"
-        app:iiv_icon="gmd-remove_circle_outline"
-        android:layout_marginTop="6dp"/>
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/minus"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to decrease the heat level by one each time you press"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@android:color/darker_gray"
+            app:iiv_icon="gmd-remove_circle_outline"
+            android:layout_marginTop="6dp"/>
+
         <TextView
             android:id="@+id/heat_level"
             android:layout_width="wrap_content"
@@ -33,47 +33,69 @@
             android:text="0"
             android:layout_gravity="center_vertical"/>
 
-        <TextView
-            android:id="@+id/clock_alert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/secondary_text"
-            android:textSize="@dimen/huge_font"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            app:layout_constraintEnd_toStartOf="@+id/minus"
-            app:layout_constraintStart_toEndOf="@+id/plus"
-            app:layout_constraintTop_toBottomOf="@+id/minus"
-            tools:text="5:10" />
-
-
         <com.mikepenz.iconics.view.IconicsImageButton
-            android:id="@+id/alert"
+            android:id="@+id/plus"
             android:layout_width="34dp"
             android:layout_height="34dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to increase the heat level by one each time you press"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@android:color/darker_gray"
+            app:iiv_icon="gmd-add_circle_outline"
+            android:layout_marginTop="6dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/clock_alert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/huge_font"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                tools:text="5:10" />
+
+
+            <com.mikepenz.iconics.view.IconicsImageButton
+                android:id="@+id/alert"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Press to set an alert"
+                app:iiv_background_color="@android:color/transparent"
+                app:iiv_background_contour_color="@android:color/transparent"
+                app:iiv_color="@android:color/darker_gray"
+                app:iiv_icon="gmd-access_alarms" />
+        </FrameLayout>
+
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/stop_alert"
+            android:visibility="gone"
+            android:layout_gravity="center_vertical"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginTop="4dp"
+            android:layout_marginLeft="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="Press to set an alert"
             app:iiv_background_color="@android:color/transparent"
             app:iiv_background_contour_color="@android:color/transparent"
             app:iiv_color="@android:color/darker_gray"
-            app:iiv_icon="gmd-access_alarms"
-            app:layout_constraintEnd_toStartOf="@+id/minus"
-            app:layout_constraintStart_toEndOf="@+id/plus"
-            app:layout_constraintTop_toBottomOf="@+id/minus" />
-    </LinearLayout>
+            app:iiv_icon="gmd-alarm_off"/>
 
-    <com.mikepenz.iconics.view.IconicsImageButton
-        android:id="@+id/plus"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Press to increase the heat level by one each time you press"
-        app:iiv_background_color="@android:color/transparent"
-        app:iiv_background_contour_color="@android:color/transparent"
-        app:iiv_color="@android:color/darker_gray"
-        app:iiv_icon="gmd-add_circle_outline"
-        android:layout_marginTop="6dp"/>
+    </LinearLayout>
 
 </LinearLayout>

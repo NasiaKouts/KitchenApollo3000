@@ -1,237 +1,269 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="aueb.nasia_kouts.gr.kitchenapollo.OvenActivity"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="aueb.nasia_kouts.gr.kitchenapollo.OvenActivity"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="2">
 
-        <android.support.constraint.ConstraintLayout
+        <TextView
+            android:paddingTop="16dp"
+            android:id="@+id/celcius"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\u2103"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toStartOf="@id/temperature_controller"
+            app:layout_constraintStart_toEndOf="@+id/temperature_controller"/>
+
+        <TextView
+            android:id="@+id/minuSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:layout_marginLeft="10dp"
+            android:textSize="35dp"
+            app:layout_constraintStart_toStartOf="@id/temperature_controller"
+            app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
+
+        <TextView
+            android:id="@+id/plusSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_marginRight="8dp"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toEndOf="@id/temperature_controller"
+            app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
+
+        <View
+            android:id="@+id/helper"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+
+            />
+        <aueb.nasia_kouts.gr.kitchenapollo.SeekArc
+            android:id="@+id/temperature_controller"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="40dp"
+            android:paddingLeft="30dp"
+            app:seekArc_max="250"
+            app:seekArc_rotation="180"
+            app:seekArc_startAngle="30"
+            app:seekArc_sweepAngle="300"
+            app:layout_constraintTop_toBottomOf="@id/celcius"
+            app:layout_constraintEnd_toEndOf="@id/helper"
+            app:layout_constraintStart_toStartOf="@+id/horizontal_separator"
+            app:seekArc_progress="0"
+            app:seekArc_touchInside="false"/>
+
+
+        <View
+            android:id="@+id/horizontal_separator"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/temperature_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0\u2103"
+            android:textSize="@dimen/huge_font"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintBottom_toTopOf="@id/info_seperator"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent" />
+
+        <View
+            android:id="@+id/info_seperator"
+            android:layout_width="100dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_purple"
+            app:layout_constraintBottom_toTopOf="@id/temperature_controller"
+            app:layout_constraintEnd_toStartOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/alertOven"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@color/accent"
+            app:iiv_icon="gmd-access_alarms"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+        <TextView
+            android:id="@+id/clock_oven_alert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/huge_font"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+
+        <com.mikepenz.iconics.view.IconicsImageButton
+            android:id="@+id/close_oven_alarm"
+            android:visibility="gone"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to set an alert"
+            app:iiv_background_color="@android:color/transparent"
+            app:iiv_background_contour_color="@android:color/transparent"
+            app:iiv_color="@color/accent"
+            app:iiv_icon="gmd-alarm_off"
+            app:layout_constraintEnd_toEndOf="@id/clock_oven_alert"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+
+        <TextView
+            android:id="@+id/mode_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/oven_closed"
+            android:textSize="@dimen/huge_font"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+
+        <ImageView
+            android:id="@+id/light_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon2"
+            app:layout_constraintEnd_toStartOf="@+id/fan_mode"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/fan_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon3"
+            app:layout_constraintEnd_toStartOf="@+id/bottom_heat_mode"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/light_mode"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/unfreeze_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/grill_bottom_heat_mode"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/grill_bottom_heat_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon1"
+            app:layout_constraintEnd_toStartOf="@+id/unfreeze_mode"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/full_heat_mode"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/full_heat_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon5"
+            app:layout_constraintEnd_toStartOf="@+id/grill_bottom_heat_mode"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/bottom_heat_mode"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+
+        <ImageView
+            android:id="@+id/bottom_heat_mode"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon4"
+            app:layout_constraintEnd_toStartOf="@+id/full_heat_mode"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fan_mode"
+            app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
+        
+        <View
+            android:id="@+id/oven_seperator"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2">
+            android:layout_height="1dp"
+            android:background="@android:color/holo_purple"
+            app:layout_constraintTop_toBottomOf="@id/fan_mode"
+            android:layout_marginTop="16dp"/>
 
-            <TextView
-                android:paddingTop="16dp"
-                android:id="@+id/celcius"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\u2103"
-                android:textSize="@dimen/huge_font"
-                app:layout_constraintEnd_toStartOf="@id/temperature_controller"
-                app:layout_constraintStart_toEndOf="@+id/temperature_controller"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/oven_seperator">
 
-            <TextView
-                android:id="@+id/minuSign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:layout_marginLeft="10dp"
-                android:textSize="35dp"
-                app:layout_constraintStart_toStartOf="@id/temperature_controller"
-                app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
-
-            <TextView
-                android:id="@+id/plusSign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:layout_marginRight="8dp"
-                android:textSize="@dimen/huge_font"
-                app:layout_constraintEnd_toEndOf="@id/temperature_controller"
-                app:layout_constraintTop_toTopOf="@+id/temperature_controller"/>
-
-            <View
-                android:id="@+id/helper"
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-
-                />
-            <aueb.nasia_kouts.gr.kitchenapollo.SeekArc
-                android:id="@+id/temperature_controller"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginLeft="40dp"
-                android:paddingLeft="30dp"
-                app:seekArc_max="250"
-                app:seekArc_rotation="180"
-                app:seekArc_startAngle="30"
-                app:seekArc_sweepAngle="300"
-                app:layout_constraintTop_toBottomOf="@id/celcius"
-                app:layout_constraintEnd_toEndOf="@id/helper"
-                app:layout_constraintStart_toStartOf="@+id/horizontal_separator"
-                app:seekArc_progress="0"
-                app:seekArc_touchInside="false"/>
-
-
-            <View
-                android:id="@+id/horizontal_separator"
-                android:layout_width="1dp"
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="8dp"
-                app:layout_constraintEnd_toStartOf="parent"
-                app:layout_constraintStart_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/temperature_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0\u2103"
-                android:textSize="@dimen/huge_font"
-                android:textStyle="bold"
-                android:layout_marginLeft="20dp"
-                app:layout_constraintBottom_toTopOf="@id/info_seperator"
-                app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
-                app:layout_constraintStart_toEndOf="parent" />
-
-            <View
-                android:id="@+id/info_seperator"
-                android:layout_width="100dp"
-                android:layout_height="1dp"
-                android:layout_marginLeft="20dp"
-                android:background="@android:color/holo_purple"
-                app:layout_constraintBottom_toTopOf="@id/temperature_controller"
-                app:layout_constraintEnd_toStartOf="@id/horizontal_separator"
-                app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+                android:src="@drawable/oven_cropped"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                />
 
             <com.mikepenz.iconics.view.IconicsImageButton
-                android:id="@+id/alertOven"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="20dp"
+                android:id="@+id/camera"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@android:color/transparent"
-                android:contentDescription="Press to set an alert"
+                android:contentDescription="Press to see the oven inside camera view"
                 app:iiv_background_color="@android:color/transparent"
                 app:iiv_background_contour_color="@android:color/transparent"
-                app:iiv_color="@color/accent"
-                app:iiv_icon="gmd-access_alarms"
-                app:layout_constraintEnd_toEndOf="@id/horizontal_separator"
-                app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/info_seperator" />
+                app:iiv_color="@android:color/holo_green_dark"
+                app:iiv_icon="gmd-play_circle_outline"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
-            <TextView
-                android:id="@+id/mode_selected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/oven_closed"
-                android:textSize="@dimen/huge_font"
-                app:layout_constraintEnd_toStartOf="parent"
-                app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperature_controller" />
+    </android.support.constraint.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/light_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon2"
-                app:layout_constraintEnd_toStartOf="@+id/fan_mode"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <ImageView
-                android:id="@+id/fan_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon3"
-                app:layout_constraintEnd_toStartOf="@+id/bottom_heat_mode"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/light_mode"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <ImageView
-                android:id="@+id/unfreeze_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon7"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/grill_bottom_heat_mode"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <ImageView
-                android:id="@+id/grill_bottom_heat_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon1"
-                app:layout_constraintEnd_toStartOf="@+id/unfreeze_mode"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/full_heat_mode"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <ImageView
-                android:id="@+id/full_heat_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon5"
-                app:layout_constraintEnd_toStartOf="@+id/grill_bottom_heat_mode"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/bottom_heat_mode"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <ImageView
-                android:id="@+id/bottom_heat_mode"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/icon4"
-                app:layout_constraintEnd_toStartOf="@+id/full_heat_mode"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/fan_mode"
-                app:layout_constraintTop_toBottomOf="@+id/mode_selected" />
-
-            <View
-                android:id="@+id/oven_seperator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_purple"
-                app:layout_constraintTop_toBottomOf="@id/fan_mode"
-                android:layout_marginTop="16dp"/>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/oven_seperator">
-
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/oven_cropped"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    />
-
-                <com.mikepenz.iconics.view.IconicsImageButton
-                    android:id="@+id/camera"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Press to see the oven inside camera view"
-                    app:iiv_background_color="@android:color/transparent"
-                    app:iiv_background_contour_color="@android:color/transparent"
-                    app:iiv_color="@android:color/holo_green_dark"
-                    app:iiv_icon="gmd-play_circle_outline"
-                    android:layout_gravity="center" />
-            </FrameLayout>
-
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
+</LinearLayout>
