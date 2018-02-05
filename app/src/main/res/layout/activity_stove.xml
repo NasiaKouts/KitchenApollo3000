@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp"
-    tools:context="aueb.nasia_kouts.gr.kitchenapollo.StoveActivity"
-    tools:layout_editor_absoluteY="25dp">
 
-
-    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
-        android:id="@+id/ib_stove_leftup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:contentDescription="Tap to open the ring at the up left corner"
-        app:layout_constraintBottom_toTopOf="@+id/ib_stove_rightup"
-        app:layout_constraintEnd_toEndOf="@+id/dividerVer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ib_stove_rightup"
-        app:srcCompat="@drawable/circle_one_stove" />
-
-    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
-        android:id="@+id/ib_stove_rightup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/dividerHor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/dividerVer"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35000002"
-        app:srcCompat="@drawable/circle_two_stove"
-        android:contentDescription="Tap to open the inner ring at the up right corner. Double tap to open the outer ring"/>
-
-    <View
-        android:id="@+id/dividerHor"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/transparent"
-        android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
-
-    <View
-        android:id="@+id/dividerVer"
-        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
         android:padding="8dp"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="parent" />
+        tools:context="aueb.nasia_kouts.gr.kitchenapollo.StoveActivity"
+        tools:layout_editor_absoluteY="25dp">
 
-    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
-        android:id="@+id/ib_stove_leftbottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/dividerVer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttons_leftup"
-        app:layout_constraintVertical_bias="0.35000002"
-        app:srcCompat="@drawable/circle_two_stove_2"
-        android:contentDescription="Tap to open the inner ring at the bottom left corner. Double tap to open the outer ring"/>
+        <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
+            android:id="@+id/ib_stove_leftup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="Tap to open the ring at the up left corner"
+            app:layout_constraintBottom_toTopOf="@+id/ib_stove_rightup"
+            app:layout_constraintEnd_toEndOf="@+id/dividerVer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ib_stove_rightup"
+            app:srcCompat="@drawable/circle_one_stove" />
 
-    <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
-        android:id="@+id/ib_stove_rightbottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:contentDescription="Press to open the ring at the bottom right corner"
-        app:layout_constraintBottom_toTopOf="@+id/ib_stove_leftbottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/dividerVer"
-        app:layout_constraintTop_toBottomOf="@+id/ib_stove_leftbottom"
-        app:srcCompat="@drawable/circle_small_one_stove" />
+        <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
+            android:id="@+id/ib_stove_rightup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@+id/dividerHor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/dividerVer"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.35000002"
+            app:srcCompat="@drawable/circle_two_stove"
+            android:contentDescription="Tap to open the inner ring at the up right corner. Double tap to open the outer ring"/>
 
-    <include
-        android:id="@+id/buttons_leftup"
-        layout="@layout/stove_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/ib_stove_leftup"
-        app:layout_constraintTop_toTopOf="@+id/buttons_rightup"
-        app:layout_constraintEnd_toStartOf="@id/ib_stove_leftup"/>
+        <View
+            android:id="@+id/dividerHor"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
 
-    <include
-        android:id="@+id/buttons_rightup"
-        layout="@layout/stove_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@+id/ib_stove_rightup"
-        app:layout_constraintTop_toBottomOf="@+id/ib_stove_rightup"
-        app:layout_constraintEnd_toStartOf="@id/ib_stove_rightup"/>
+        <View
+            android:id="@+id/dividerVer"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="parent" />
 
-    <include
-        android:id="@+id/buttons_leftbottom"
-        layout="@layout/stove_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@+id/ib_stove_leftbottom"
-        app:layout_constraintEnd_toStartOf="@id/ib_stove_leftbottom"
-        app:layout_constraintTop_toBottomOf="@+id/ib_stove_leftbottom"/>
+        <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
+            android:id="@+id/ib_stove_leftbottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/dividerVer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttons_leftup"
+            app:layout_constraintVertical_bias="0.35000002"
+            app:srcCompat="@drawable/circle_two_stove_2"
+            android:contentDescription="Tap to open the inner ring at the bottom left corner. Double tap to open the outer ring"/>
 
-    <include
-        android:id="@+id/buttons_rightbottom"
-        layout="@layout/stove_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/ib_stove_rightbottom"
-        app:layout_constraintEnd_toStartOf="@id/ib_stove_rightbottom"
-        app:layout_constraintTop_toTopOf="@id/buttons_leftbottom" />
+        <aueb.nasia_kouts.gr.kitchenapollo.StoveButton
+            android:id="@+id/ib_stove_rightbottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="Press to open the ring at the bottom right corner"
+            app:layout_constraintBottom_toTopOf="@+id/ib_stove_leftbottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/dividerVer"
+            app:layout_constraintTop_toBottomOf="@+id/ib_stove_leftbottom"
+            app:srcCompat="@drawable/circle_small_one_stove" />
+
+        <include
+            android:id="@+id/buttons_leftup"
+            layout="@layout/stove_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/ib_stove_leftup"
+            app:layout_constraintTop_toTopOf="@+id/buttons_rightup"
+            app:layout_constraintEnd_toStartOf="@id/ib_stove_leftup"/>
+
+        <include
+            android:id="@+id/buttons_rightup"
+            layout="@layout/stove_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/ib_stove_rightup"
+            app:layout_constraintTop_toBottomOf="@+id/ib_stove_rightup"
+            app:layout_constraintEnd_toStartOf="@id/ib_stove_rightup"/>
+
+        <include
+            android:id="@+id/buttons_leftbottom"
+            layout="@layout/stove_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/ib_stove_leftbottom"
+            app:layout_constraintEnd_toStartOf="@id/ib_stove_leftbottom"
+            app:layout_constraintTop_toBottomOf="@+id/ib_stove_leftbottom"/>
+
+        <include
+            android:id="@+id/buttons_rightbottom"
+            layout="@layout/stove_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/ib_stove_rightbottom"
+            app:layout_constraintEnd_toStartOf="@id/ib_stove_rightbottom"
+            app:layout_constraintTop_toTopOf="@id/buttons_leftbottom" />
 </android.support.constraint.ConstraintLayout>
