@@ -1,5 +1,9 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,8 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class OvenActivity extends AppCompatActivity {
+public class OvenActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     SeekArc ovenTemp;
     TextView tempTextView;
@@ -25,6 +30,8 @@ public class OvenActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        setUpSharedPreferences();
 
         ovenTemp = findViewById(R.id.temperature_controller);
         tempTextView = findViewById(R.id.temperature_text);
@@ -62,11 +69,48 @@ public class OvenActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        setUpSharedPreferences();
+    }
+
+    private  void setUpSharedPreferences(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
+        boolean openedFirstTime = sharedPref.getBoolean("openedFirstTime", false);
+
+        if(openedFirstTime){
+            boolean speechEnabledOld = sharedPref.getBoolean("speechAssist", true);
+            boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+
+            SharedPreferences.Editor prefEditor = sharedPref.edit();
+            prefEditor.putBoolean("speechAssist", speechEnabled);
+            prefEditor.apply();
+
+            if(speechEnabledOld != speechEnabled){
+                if(speechEnabled){
+                    Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
+                    //TODO ?
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
+        sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.settings_button:
+                Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(openSettingsIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
