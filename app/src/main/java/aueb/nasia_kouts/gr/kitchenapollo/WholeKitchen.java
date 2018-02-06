@@ -18,6 +18,7 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,9 +65,18 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
         setUpSharedPreferences();
 
-        // This is for getting the input
-        requestRecordAudioPermission();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firsttime = sharedPreferences.getBoolean("firsttime",true);
+        if (firsttime){
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firsttime", false);
+            Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
+            startActivity(openTutorialIntent);
+        }
+
     }
+
+
 
     public void initializeSpeechClient(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -115,36 +125,39 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        textToSpeechClient = new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if (i == TextToSpeech.SUCCESS) {
-                    textToSpeechClient.setLanguage(Locale.US);
+        if(requestCode==88){
+            if(grantResults.length>0){
+                textToSpeechClient = new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int i) {
+                        if (i == TextToSpeech.SUCCESS) {
+                            textToSpeechClient.setLanguage(Locale.US);
 
-                    textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
-                    SystemClock.sleep(3000);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
-                }
+                            textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
+                            SystemClock.sleep(3000);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                initializeSpeechClient();
+            }else {
+
             }
-        });
+        }
         //initializeSpeechClient();
         Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
         startActivity(openTutorialIntent);
     }
 
     private void requestRecordAudioPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String requiredPermission = Manifest.permission.RECORD_AUDIO;
-
-            // If the user previously denied this permission then show a message explaining why
-            // this permission is needed
-            if (checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{requiredPermission}, 101);
-            }else{
-                //initializeSpeechClient();
+        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
+                requestPermissions(permissions,88);
             }
+        }else{
+            initializeSpeechClient();
         }
     }
 
@@ -181,18 +194,11 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
         }
-        toSpeech.shutdown();
-    }
+        if (toSpeech != null){
+            toSpeech.shutdown();
+        }    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mSpeechRecognizer != null){
-            mSpeechRecognizer.destroy();
-        }
 
-        toSpeech.shutdown();
-    }
 
     @Override
     protected void onPause() {
@@ -200,14 +206,19 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
         }
-
-        toSpeech.shutdown();
+        if (toSpeech != null){
+            toSpeech.shutdown();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initializeSpeechClient();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firsttime = sharedPreferences.getBoolean("firsttime",true);
+        if (!firsttime){
+            requestRecordAudioPermission();
+        }
     }
 
     @Override
@@ -222,6 +233,9 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }else if(item.getItemId() == R.id.settings_button){
             Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(openSettingsIntent);
+        }else if(item.getItemId() == R.id.tutorial_button){
+            Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
+            startActivity(openTutorialIntent);
         }
         return true;
     }
@@ -390,14 +404,37 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 if(mSpeechRecognizer != null){
                     mSpeechRecognizer.destroy();
                 }
+                if (toSpeech != null){
+                    toSpeech.shutdown();
+                }
                 break;
             }
             case 2:
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                toSpeech.shutdown();
                 Intent openStoveIntent = new Intent(this, StoveActivity.class);
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                if (toSpeech != null){
+                    toSpeech.shutdown();
+                }
                 startActivity(openStoveIntent);
                 break;
             case 3:
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                toSpeech.shutdown();
                 Intent openOvenIntent = new Intent(this, OvenActivity.class);
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                if (toSpeech != null){
+                    toSpeech.shutdown();
+                }
                 startActivity(openOvenIntent);
                 break;
             case 4:{
