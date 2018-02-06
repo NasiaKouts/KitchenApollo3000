@@ -45,8 +45,12 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
     StoveButton stoveButtons[];
     CountDownTimer countDownTimers[];
+    IconicsImageButton camera;
 
     int alertMinutes;
+
+    private int number;
+    private int posInt = -3;
 
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
@@ -107,6 +111,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             "set right bottom heat level to nine",
             "start stove",
             "start oven",
+            "help",
             "Show me Commands"
     };
     // responses to commands
@@ -163,6 +168,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             "right bottom heat level has been set to nine",
             "stove is already opened, I am waiting for your next command",
             "starting oven",
+            "",
             "I'm sorry i can't do that"};
 
     @Override
@@ -173,6 +179,8 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        responses[53] = getString(R.string.stove_info);
 
         setUpSharedPreferences();
 
@@ -231,6 +239,14 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         }
 
         countDownTimers = new CountDownTimer[4];
+
+        camera = findViewById(R.id.cameraStove);
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Now you are going to see what is going on your stoves", Toast.LENGTH_LONG).show();
+            }
+        });
 
         initializeSpeechClient();
     }
@@ -352,6 +368,11 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
         final NumberPicker picker = viewInflated.findViewById(R.id.number_picker);
         final CheckBox closeStoveStoveAfter = viewInflated.findViewById(R.id.close_stove_after_time);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firsttime = sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key),false);
+        closeStoveStoveAfter.setChecked(firsttime);
+
         closeStoveStoveAfter.setText("Close stove when time exceed");
 
         picker.setValue(startValue);
@@ -592,6 +613,9 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(openSettingsIntent);
                 return true;
+            case R.id.help_button:
+                toSpeech.speak(getString(R.string.stove_info), TextToSpeech.QUEUE_FLUSH, null);
+                SystemClock.sleep(5000);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -673,16 +697,15 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         @Override
         public void onResults(Bundle results)
         {
-            Log.d(TAG, "onResults"); //$NON-NLS-1$
+            Log.d(TAG, "onResults");
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            // matches are the return values of speech recognition engine
-            // Use these values for whatever you wish to do
             result = matches.get(0);
             mSpeechRecognizer.cancel();
 
-            // TODO: 5/2/2018 Here is where you pass the result of the speech
             if(checkCommands(result)==commands.length-1){
                 SystemClock.sleep(3500);
+            }else if(checkCommands(result) == 53){
+                SystemClock.sleep(5000);
             }else {
                 SystemClock.sleep(2500);
             }
@@ -698,26 +721,86 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
     public int checkCommands(String result){
         System.out.println(result);
         int index = isValidCommand(result);
-        System.out.println(index);
-        System.out.println(commands.length-1);
         HashMap<String, String> myHashAlarm = new HashMap<>();
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
         // Here it speaks
-        if (index==commands.length-1){
+        System.out.println(index + " pos: " + posInt);
+        if ( index==commands.length-1){
             toSpeech.setSpeechRate(0.8f);
             toSpeech.speak(getCommands(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
             toSpeech.setSpeechRate(1.0f);
-
-        }else if(index != -1){
+        }else if(index == posInt){
+            number = getNumber(result);
+            toSpeech.speak(responses[index] + number, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+        }
+        else if(index != -1){
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-
         }
         else{
             index = responses.length -1;
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }
         runCommands(index);
+        return index;
+    }
+
+    public int getNumber(String command){
+        StringTokenizer str = new StringTokenizer(command);
+        int number = -1;
+        int i = 0;
+        int pos = str.countTokens() - 2;
+        while (str.hasMoreTokens()){
+            if (i!=pos){
+                str.nextToken();
+            }else {
+                try{
+                    number = Integer.parseInt(str.nextToken());
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                    return -3;
+                }
+            }
+            i++;
+        }
+        return number;
+    }
+
+    public String getNewCommand(String command ,int number){
+        StringTokenizer st = new StringTokenizer(command.replace(Integer.toString(number),""));
+        StringBuilder string = new StringBuilder();
+        while (st.hasMoreTokens()){
+            string.append(st.nextToken() + " ");
+        }
+        return string.toString().substring(0, string.toString().length()-1);
+    }
+
+    public int isValidCommand(String result){
+        int index;
+        int i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(result)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
+
+        int tempature = getNumber(result);
+        System.out.println(tempature);
+        if(tempature < 0) return -1;
+
+        String newCommand = getNewCommand(result,tempature);
+        index = -1;
+        System.out.println("new "+newCommand);
+        i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(newCommand)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
         return index;
     }
 
@@ -772,31 +855,6 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    public int isValidCommand(String result){
-        int index = -1;
-        int i = 0;
-        for(String command: commands){
-            String temp = command
-                    .replace("1", "one")
-                    .replace("2", "two")
-                    .replace("3", "three")
-                    .replace("4", "four")
-                    .replace("5", "five")
-                    .replace("6", "six")
-                    .replace("7", "seven")
-                    .replace("8", "eight")
-                    .replace("9", "nine")
-                    .replace("lift", "left")
-                    .replace("sad", "set")
-                    .replace("said", "set");
-            if(temp.equalsIgnoreCase(result)){
-                index = i;
-            }
-            i++;
-        }
-        return index;
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -805,7 +863,9 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
         }
-        toSpeech.shutdown();
+        if(toSpeech != null){
+            toSpeech.shutdown();
+        }
     }
 
     @Override
@@ -813,20 +873,12 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         super.onStop();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
+            SystemClock.sleep(500);
         }
 
-        toSpeech.shutdown();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        super.onStop();
-        if(mSpeechRecognizer != null){
-            mSpeechRecognizer.destroy();
+        if(toSpeech != null){
+            toSpeech.shutdown();
         }
-
-        toSpeech.shutdown();
     }
 }
 

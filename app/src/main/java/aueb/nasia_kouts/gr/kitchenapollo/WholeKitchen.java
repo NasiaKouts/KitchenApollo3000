@@ -51,6 +51,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             "no",
             "start stove",
             "start oven",
+            "help",
             "Show me Commands"};
     // responses to commands
     private String[] responses = {
@@ -58,12 +59,15 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             "disabling speech assistance",
             "Starting the stove",
             "Starting the oven",
+            "",
             "I'm sorry i can't do that"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_whole_kitchen);
+
+        responses[4] = getString(R.string.general_info);
 
         setUpSharedPreferences();
     }
@@ -148,20 +152,9 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     private void setUpSharedPreferences(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
-
-        if(speechEnabled){
-            Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
-            if(mSpeechRecognizer != null){
-                mSpeechRecognizer.destroy();
-            }
-        }
+        sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -174,7 +167,8 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }
         if (toSpeech != null){
             toSpeech.shutdown();
-        }    }
+        }
+    }
 
 
 
@@ -203,10 +197,8 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.help_button){
             if(toSpeech != null){
-                toSpeech.speak(
-                        getResources().getString(R.string.general_info),
-                        TextToSpeech.QUEUE_FLUSH,
-                        null);
+                toSpeech.speak(getString(R.string.general_info), TextToSpeech.QUEUE_FLUSH, null);
+                SystemClock.sleep(5000);
             }
         }else if(item.getItemId() == R.id.settings_button){
             Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
@@ -254,22 +246,20 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         public void onEndOfSpeech()
         {
             Log.d(TAG, "onEndOfSpeech");
-
         }
 
         @Override
         public void onError(int error)
         {
             if (performingSpeechSetup && error == SpeechRecognizer.ERROR_NO_MATCH) return;
-            if(error == 8){
-                mSpeechRecognizer.stopListening();
-                mSpeechRecognizer.cancel();
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-            }else{
-                mSpeechRecognizer.stopListening();
-                mSpeechRecognizer.cancel();
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+            mSpeechRecognizer.destroy();
+            if(toSpeech != null){
+                toSpeech.shutdown();
             }
+            SystemClock.sleep(500);
+            initializeSpeechClient();
+
 
             String message = "";
 
@@ -307,10 +297,8 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         @Override
         public void onResults(Bundle results)
         {
-            Log.d(TAG, "onResults"); //$NON-NLS-1$
+            Log.d(TAG, "onResults");
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            // matches are the return values of speech recognition engine
-            // Use these values for whatever you wish to do
             result = matches.get(0);
             mSpeechRecognizer.cancel();
 
@@ -449,12 +437,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 Intent openOvenIntent = new Intent(this, OvenActivity.class);
                 startActivity(openOvenIntent);
                 break;
-            case 4:{
-                ActivityManager am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-                ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                Log.d(TAG, cn.getShortClassName());
-            }
-
         }
     }
 }

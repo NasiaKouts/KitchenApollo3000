@@ -142,6 +142,7 @@ public class TutorialActivity extends AppCompatActivity {
         {
             if(mSpeechRecognizer != null){
                 mSpeechRecognizer.destroy();
+                SystemClock.sleep(500);
             }
             if(toSpeech != null){
                 toSpeech.shutdown();
@@ -158,6 +159,16 @@ public class TutorialActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.finish_button:
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                    SystemClock.sleep(500);
+                }
+                if(toSpeech != null){
+                    toSpeech.shutdown();
+                }
+                if(textToSpeechClient != null){
+                    textToSpeechClient.shutdown();
+                }
                 finish();
                 return true;
         }
@@ -342,6 +353,7 @@ public class TutorialActivity extends AppCompatActivity {
         super.onDestroy();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
+            SystemClock.sleep(500);
         }
         if(toSpeech != null){
             toSpeech.shutdown();
@@ -356,6 +368,7 @@ public class TutorialActivity extends AppCompatActivity {
         super.onStop();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
+            SystemClock.sleep(500);
         }
         if(toSpeech != null){
             toSpeech.shutdown();
