@@ -72,19 +72,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
         if(!speechEnabled) return;
-
-        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        performingSpeechSetup = true;
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizer.setRecognitionListener(new WholeKitchen.SpeechRecognitionListener());
-
-        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-
         // This is for reading the input
         toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -111,6 +98,18 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 }
             }
         });
+
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizer.setRecognitionListener(new WholeKitchen.SpeechRecognitionListener());
+
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
     }
 
     @Override
@@ -153,7 +152,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
         if(speechEnabled){
             Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
-            //initializeSpeechClient();
         }
         else{
             Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
