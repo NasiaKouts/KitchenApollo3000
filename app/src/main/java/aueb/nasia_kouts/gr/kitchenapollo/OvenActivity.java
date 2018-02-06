@@ -150,6 +150,23 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         });
 
         initializeSpeechClient();
+      
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey(temperature)){
+               String selectedTemp = savedInstanceState.getString(temperature);
+               ovenTemp.setProgress(Integer.parseInt(selectedTemp));
+               tempTextView.setText(selectedTemp + "\\u2103");
+               ovenTemp.setProgress(Integer.parseInt(selectedTemp));
+            }
+            if(savedInstanceState.containsKey(openedModeId)){
+                int id = savedInstanceState.getInt(openedModeId);
+                if(id != -1){
+                    openedMode = findViewById(id);
+                    openedMode.callOnClick();
+                    updateLabel();
+                }
+            }
+        }
     }
 
     public void initializeSpeechClient(){
@@ -269,6 +286,18 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
     }
+
+    private static final String temperature = "temperature";
+    private static final String openedModeId = "openedModeId";
+
+    @Override
+    protected void onSaveInstanceState(Bundle state){
+        super.onSaveInstanceState(state);
+        state.putString( temperature, String.valueOf(ovenTemp.getProgress()));
+        if(openedMode==null) state.putInt(openedModeId, -1);
+        else state.putInt(openedModeId, openedMode.getId());
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
