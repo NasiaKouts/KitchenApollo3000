@@ -2,6 +2,9 @@ package aueb.nasia_kouts.gr.kitchenapollo;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +17,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -30,20 +36,26 @@ import static android.content.ContentValues.TAG;
 
 public class WholeKitchen extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
-    private TextToSpeech textToSpeechClient;
-    // xreiazontai
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
     private boolean performingSpeechSetup;
     private TextToSpeech toSpeech;
     private String result;
     // Show me commands na einai panta to teleutaio
-    private String[] commands = {"start stove", "start oven", "Show me Commands"};
+    private String[] commands = {
+            "yes",
+            "no",
+            "start stove",
+            "start oven",
+            "Show me Commands"};
     // responses to commands
-    private String[] responses = {"Starting the stove", "Starting the oven", "I'm sorry i can't do that"};
-
-
-
+    private String[] responses = {
+            "Enabling speech assistance",
+            "disabling speech assistance",
+            "Starting the stove",
+            "Starting the oven",
+            "I'm sorry i can't do that"};
+    private TextToSpeech textToSpeechClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,55 +64,18 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
         setUpSharedPreferences();
 
-        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
-
-        boolean openedFirstTime = sharedPref.getBoolean("openedFirstTime", false);
-        if(!openedFirstTime){
-            SharedPreferences.Editor prefEditor = sharedPref.edit();
-            prefEditor.putBoolean("openedFirstTime", true);
-            prefEditor.apply();
-
-            textToSpeechClient = new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int i) {
-                    if(i == TextToSpeech.SUCCESS){
-                        textToSpeechClient.setLanguage(Locale.US);
-
-                        textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
-                        //TODO: open speech to text and hold the answer and set it to the following boolean
-                        boolean userWantsSpeechAssistance = false;
-
-                        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
-                        SharedPreferences.Editor prefEditor = sharedPref.edit();
-                        prefEditor.putBoolean("speechAssist", userWantsSpeechAssistance);
-                        prefEditor.apply();
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
         // This is for getting the input
         requestRecordAudioPermission();
-        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(WholeKitchen.this);
-        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        performingSpeechSetup = true;
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
-        WholeKitchen.SpeechRecognitionListener listener = new WholeKitchen.SpeechRecognitionListener();
-        mSpeechRecognizer.setRecognitionListener(listener);
 
         // This is for reading the input
-        toSpeech= new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
+        toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
                     toSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                         @Override
                         public void onDone(String utteranceId) {
-                             Log.d("MainActivity", "TTS finished");
+                            Log.d("MainActivity", "TTS finished");
                         }
 
                         @Override
@@ -118,10 +93,57 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 }
             }
         });
+    }
 
-        // start listening
+    public void initializeSpeechClient(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+        if(!speechEnabled) return;
+
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizer.setRecognitionListener(new WholeKitchen.SpeechRecognitionListener());
+
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        textToSpeechClient = new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                if (i == TextToSpeech.SUCCESS) {
+                    textToSpeechClient.setLanguage(Locale.US);
+
+                    textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
+                    SystemClock.sleep(4500);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        initializeSpeechClient();
+    }
+
+    private void requestRecordAudioPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String requiredPermission = Manifest.permission.RECORD_AUDIO;
+
+            // If the user previously denied this permission then show a message explaining why
+            // this permission is needed
+            if (checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions(new String[]{requiredPermission}, 101);
+            }else{
+                initializeSpeechClient();
+            }
+        }
     }
 
     @Override
@@ -129,28 +151,19 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         setUpSharedPreferences();
     }
 
-    private  void setUpSharedPreferences(){
+    private void setUpSharedPreferences(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
-        boolean openedFirstTime = sharedPref.getBoolean("openedFirstTime", false);
+        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
 
-        if(openedFirstTime){
-            boolean speechEnabledOld = sharedPref.getBoolean("speechAssist", true);
-            boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
-
-            SharedPreferences.Editor prefEditor = sharedPref.edit();
-            prefEditor.putBoolean("speechAssist", speechEnabled);
-            prefEditor.apply();
-
-            if(speechEnabledOld != speechEnabled){
-                if(speechEnabled){
-                    Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
-                    //TODO ?
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
-                }
+        if(speechEnabled){
+            Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
+            //initializeSpeechClient();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
+            if(mSpeechRecognizer != null){
+                mSpeechRecognizer.destroy();
             }
         }
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
@@ -163,7 +176,19 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
-        mSpeechRecognizer.destroy();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+        toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+
         toSpeech.shutdown();
     }
 
@@ -189,7 +214,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         return true;
     }
 
-
     public void openStoveActivity(View view) {
         Intent openStoveIntent = new Intent(this, StoveActivity.class);
         startActivity(openStoveIntent);
@@ -201,28 +225,9 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     }
 
     //----------------------------------------------------//
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        mSpeechRecognizer.destroy();
-        toSpeech.shutdown();
-    }
-
-    private void requestRecordAudioPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String requiredPermission = Manifest.permission.RECORD_AUDIO;
-
-            // If the user previously denied this permission then show a message explaining why
-            // this permission is needed
-            if (checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{requiredPermission}, 101);
-            }
-        }
-    }
 
     protected class SpeechRecognitionListener implements RecognitionListener
     {
-
         @Override
         public void onBeginningOfSpeech()
         {
@@ -244,17 +249,30 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         @Override
         public void onError(int error)
         {
-
             if (performingSpeechSetup && error == SpeechRecognizer.ERROR_NO_MATCH) return;
-            if(error == 8) {
+            if(error == 8){
+                mSpeechRecognizer.stopListening();
                 mSpeechRecognizer.cancel();
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
             }else{
+                mSpeechRecognizer.stopListening();
                 mSpeechRecognizer.cancel();
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
             }
-            Log.d(TAG, "error = " + error);
 
+            String message = "";
+
+            if(error == SpeechRecognizer.ERROR_AUDIO)                           message = "audio";
+            else if(error == SpeechRecognizer.ERROR_CLIENT)                     message = "client";
+            else if(error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS)   message = "insufficient permissions";
+            else if(error == SpeechRecognizer.ERROR_NETWORK)                    message = "network";
+            else if(error == SpeechRecognizer.ERROR_NETWORK_TIMEOUT)            message = "network timeout";
+            else if(error == SpeechRecognizer.ERROR_NO_MATCH)                   message = "no match found";
+            else if(error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY)            message = "recognizer busy";
+            else if(error == SpeechRecognizer.ERROR_SERVER)                     message = "server";
+            else if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)             message = "speech timeout";
+
+            Log.d(TAG,"error " + message);
         }
 
         @Override
@@ -305,7 +323,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         int index = isValidCommand(result);
         System.out.println(index);
         System.out.println(commands.length-1);
-        HashMap<String, String> myHashAlarm = new HashMap<String, String>();
+        HashMap<String, String> myHashAlarm = new HashMap<>();
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
         // Here it speaks
@@ -335,18 +353,40 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }
         return input;
     }
+
     // Mono auto allazeis
     public void runCommands(int index){
         switch (index){
-            case 0:
+            case 0:{
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+                prefEditor.putBoolean(getString(R.string.pref_speech_enabled_key), true);
+                prefEditor.apply();
+                break;
+            }
+            case 1:{
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+                prefEditor.putBoolean(getString(R.string.pref_speech_enabled_key), false);
+                prefEditor.apply();
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                break;
+            }
+            case 2:
                 Intent openStoveIntent = new Intent(this, StoveActivity.class);
                 startActivity(openStoveIntent);
                 break;
-            case 1:
+            case 3:
                 Intent openOvenIntent = new Intent(this, OvenActivity.class);
                 startActivity(openOvenIntent);
                 break;
-            case 2:
+            case 4:{
+                ActivityManager am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+                ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                Log.d(TAG, cn.getShortClassName());
+            }
 
         }
     }
@@ -362,5 +402,4 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }
         return index;
     }
-
 }
