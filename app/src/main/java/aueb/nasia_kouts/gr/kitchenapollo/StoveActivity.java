@@ -55,16 +55,16 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
     private String result;
     // Show me commands na einai panta to teleutaio
     private String[] commands = {
-            "open left up stove",
-            "close left up stove",
-            "open right up stove",
-            "open right up big stove",
-            "close right up stove",
-            "open left bottom stove",
-            "close left bottom stove",
-            "open right bottom stove",
-            "open right bottom big stove",
-            "close right bottom stove",
+            "open left top side stove",
+            "close left top side stove",
+            "open right top side stove",
+            "open right top side big stove",
+            "close right top side stove",
+            "open left bottom side stove",
+            "open left bottom side big stove",
+            "close left bottom side stove",
+            "open right bottom side stove",
+            "close right bottom side stove",
             "set left top heat level to zero",
             "set left top heat level to one",
             "set left top heat level to two",
@@ -700,7 +700,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
         // Here it speaks
-        if ( index==commands.length-1){
+        if (index==commands.length-1){
             toSpeech.setSpeechRate(0.8f);
             toSpeech.speak(getCommands(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
             toSpeech.setSpeechRate(1.0f);
@@ -768,7 +768,20 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         int index = -1;
         int i = 0;
         for(String command: commands){
-            if(command.equalsIgnoreCase(result)){
+            String temp = command
+                    .replace("1", "one")
+                    .replace("2", "two")
+                    .replace("3", "three")
+                    .replace("4", "four")
+                    .replace("5", "five")
+                    .replace("6", "six")
+                    .replace("7", "seven")
+                    .replace("8", "eight")
+                    .replace("9", "nine")
+                    .replace("lift", "left")
+                    .replace("sad", "set")
+                    .replace("said", "set");
+            if(temp.equalsIgnoreCase(result)){
                 index = i;
             }
             i++;
@@ -790,16 +803,6 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onStop() {
         super.onStop();
-        if(mSpeechRecognizer != null){
-            mSpeechRecognizer.destroy();
-        }
-
-        toSpeech.shutdown();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
         }
