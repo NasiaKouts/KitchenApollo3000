@@ -1,18 +1,27 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
+import android.app.ActivityManager;
 import android.app.NotificationManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioManager;
 import android.os.CountDownTimer;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,19 +33,133 @@ import android.widget.Toast;
 import com.mikepenz.iconics.view.IconicsImageButton;
 import com.travijuu.numberpicker.library.NumberPicker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.ContentValues.TAG;
 
 public class StoveActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     StoveButton stoveButtons[];
     CountDownTimer countDownTimers[];
 
-    TextToSpeech textToSpeechClient;
-    int result;
-
     int alertMinutes;
+
+    private SpeechRecognizer mSpeechRecognizer;
+    private Intent mSpeechRecognizerIntent;
+    private boolean performingSpeechSetup;
+    private TextToSpeech toSpeech;
+    private String result;
+    // Show me commands na einai panta to teleutaio
+    private String[] commands = {
+            "open left top side stove",
+            "close left top side stove",
+            "open right top side stove",
+            "open right top side big stove",
+            "close right top side stove",
+            "open left bottom side stove",
+            "open left bottom side big stove",
+            "close left bottom side stove",
+            "open right bottom side stove",
+            "close right bottom side stove",
+            "set left top heat level to zero",
+            "set left top heat level to one",
+            "set left top heat level to two",
+            "set left top heat level to three",
+            "set left top heat level to four",
+            "set left top heat level to five",
+            "set left top heat level to six",
+            "set left top heat level to seven",
+            "set left top heat level to eight",
+            "set left top heat level to nine",
+            "set right top heat level to zero",
+            "set right top heat level to one",
+            "set right top heat level to two",
+            "set right top heat level to three",
+            "set right top heat level to four",
+            "set right top heat level to five",
+            "set right top heat level to six",
+            "set right top heat level to seven",
+            "set right top heat level to eight",
+            "set right top heat level to nine",
+            "set left bottom heat level to zero",
+            "set left bottom heat level to one",
+            "set left bottom heat level to two",
+            "set left bottom heat level to three",
+            "set left bottom heat level to four",
+            "set left bottom heat level to five",
+            "set left bottom heat level to six",
+            "set left bottom heat level to seven",
+            "set left bottom heat level to eight",
+            "set left bottom heat level to nine",
+            "set right bottom heat level to zero",
+            "set right bottom heat level to one",
+            "set right bottom heat level to two",
+            "set right bottom heat level to three",
+            "set right bottom heat level to four",
+            "set right bottom heat level to five",
+            "set right bottom heat level to six",
+            "set right bottom heat level to seven",
+            "set right bottom heat level to eight",
+            "set right bottom heat level to nine",
+            "Show me Commands"
+    };
+    // responses to commands
+    private String[] responses = {
+            "left top stove opened",
+            "left top stove closed",
+            "right top stove opened",
+            "right top big stove opened",
+            "right top stove closed",
+            "left bottom stove opened",
+            "left bottom stove closed",
+            "right bottom stove opened",
+            "right bottom big stove opened",
+            "right bottom stove closed",
+            "left top heat level has been set to zero",
+            "left top heat level has been set to one",
+            "left top heat level has been set to two",
+            "left top heat level has been set to three",
+            "left top heat level has been set to four",
+            "left top heat level has been set to five",
+            "left top heat level has been set to six",
+            "left top heat level has been set to seven",
+            "left top heat level has been set to eight",
+            "left top heat level has been set to nine",
+            "right top heat level has been set to zero",
+            "right top heat level has been set to one",
+            "right top heat level has been set to two",
+            "right top heat level has been set to three",
+            "right top heat level has been set to four",
+            "right top heat level has been set to five",
+            "right top heat level has been set to six",
+            "right top heat level has been set to seven",
+            "right top heat level has been set to eight",
+            "right top heat level has been set to nine",
+            "left bottom heat level has been set to zero",
+            "left bottom heat level has been set to one",
+            "left bottom heat level has been set to two",
+            "left bottom heat level has been set to three",
+            "left bottom heat level has been set to four",
+            "left bottom heat level has been set to five",
+            "left bottom heat level has been set to six",
+            "left bottom heat level has been set to seven",
+            "left bottom heat level has been set to eight",
+            "left bottom heat level has been set to nine",
+            "right bottom heat level has been set to zero",
+            "right bottom heat level has been set to one",
+            "right bottom heat level has been set to two",
+            "right bottom heat level has been set to three",
+            "right bottom heat level has been set to four",
+            "right bottom heat level has been set to five",
+            "right bottom heat level has been set to six",
+            "right bottom heat level has been set to seven",
+            "right bottom heat level has been set to eight",
+            "right bottom heat level has been set to nine",
+            "I'm sorry i can't do that"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +171,6 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         }
 
         setUpSharedPreferences();
-
-//        textToSpeechClient = new TextToSpeech(StoveActivity.this, new TextToSpeech.OnInitListener() {
-//            @Override
-//            public void onInit(int i) {
-//                if(i == TextToSpeech.SUCCESS){
-//                    result = textToSpeechClient.setLanguage(Locale.US);
-//                }else{
-//                    Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
 
         stoveButtons = new StoveButton[4];
         for(int i = 0; i < stoveButtons.length; i++){
@@ -115,6 +227,54 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         }
 
         countDownTimers = new CountDownTimer[4];
+
+        // This is for reading the input
+        toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    toSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                            Log.d("MainActivity", "TTS finished");
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onStart(String utteranceId) {
+                            Log.d("MainActivity", "On start");
+
+                        }
+                    });
+                } else {
+                    Log.e("MainActivity", "Initilization Failed!");
+                }
+            }
+        });
+
+        initializeSpeechClient();
+    }
+
+    public void initializeSpeechClient(){
+        SystemClock.sleep(1000);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+        if(!speechEnabled) return;
+
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizer.setRecognitionListener(new StoveActivity.SpeechRecognitionListener());
+
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
     }
 
     @Override
@@ -125,27 +285,7 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
     private  void setUpSharedPreferences(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        SharedPreferences sharedPref = getSharedPreferences("userSettings", MODE_PRIVATE);
-        boolean openedFirstTime = sharedPref.getBoolean("openedFirstTime", false);
-
-        if(openedFirstTime){
-            boolean speechEnabledOld = sharedPref.getBoolean("speechAssist", true);
-            boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
-
-            SharedPreferences.Editor prefEditor = sharedPref.edit();
-            prefEditor.putBoolean("speechAssist", speechEnabled);
-            prefEditor.apply();
-
-            if(speechEnabledOld != speechEnabled){
-                if(speechEnabled){
-                    Toast.makeText(getApplicationContext(),"Speech assist is now enabled!", Toast.LENGTH_LONG).show();
-                    //TODO ?
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Speech assist is now disabled!", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
+        sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_stoves_key), false);
         sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key), false);
     }
@@ -456,6 +596,218 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    protected class SpeechRecognitionListener implements RecognitionListener
+    {
+        @Override
+        public void onBeginningOfSpeech()
+        {
+            Log.d(TAG, "onBeginingOfSpeech");
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer)
+        {
+
+        }
+
+        @Override
+        public void onEndOfSpeech()
+        {
+            Log.d(TAG, "onEndOfSpeech");
+        }
+
+        @Override
+        public void onError(int error)
+        {
+            if (performingSpeechSetup && error == SpeechRecognizer.ERROR_NO_MATCH
+                    || error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) return;
+            if(error == 8){
+                mSpeechRecognizer.stopListening();
+                mSpeechRecognizer.cancel();
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+            }else{
+                mSpeechRecognizer.stopListening();
+                mSpeechRecognizer.cancel();
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+            }
+
+            String message = "";
+
+            if(error == SpeechRecognizer.ERROR_AUDIO)                           message = "audio";
+            else if(error == SpeechRecognizer.ERROR_CLIENT)                     message = "client";
+            else if(error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS)   message = "insufficient permissions";
+            else if(error == SpeechRecognizer.ERROR_NETWORK)                    message = "network";
+            else if(error == SpeechRecognizer.ERROR_NETWORK_TIMEOUT)            message = "network timeout";
+            else if(error == SpeechRecognizer.ERROR_NO_MATCH)                   message = "no match found";
+            else if(error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY)            message = "recognizer busy";
+            else if(error == SpeechRecognizer.ERROR_SERVER)                     message = "server";
+            else if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)             message = "speech timeout";
+
+            Log.d(TAG,"error " + message);
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params)
+        {
+
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults)
+        {
+
+        }
+
+        @Override
+        public void onReadyForSpeech(Bundle params)
+        {
+            Log.d(TAG, "onReadyForSpeech"); //$NON-NLS-1$
+        }
+
+        @Override
+        public void onResults(Bundle results)
+        {
+            Log.d(TAG, "onResults"); //$NON-NLS-1$
+            ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            // matches are the return values of speech recognition engine
+            // Use these values for whatever you wish to do
+            result = matches.get(0);
+            mSpeechRecognizer.cancel();
+
+            // TODO: 5/2/2018 Here is where you pass the result of the speech
+            if(checkCommands(result)==commands.length-1){
+                SystemClock.sleep(4500);
+            }else {
+                SystemClock.sleep(4000);
+            }
+            mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB)
+        {
+        }
+    }
+
+    public int checkCommands(String result){
+        System.out.println(result);
+        int index = isValidCommand(result);
+        System.out.println(index);
+        System.out.println(commands.length-1);
+        HashMap<String, String> myHashAlarm = new HashMap<>();
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
+        // Here it speaks
+        if (index==commands.length-1){
+            toSpeech.setSpeechRate(0.8f);
+            toSpeech.speak(getCommands(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+            toSpeech.setSpeechRate(1.0f);
+
+        }else if(index != -1){
+            toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+
+        }
+        else{
+            index = responses.length -1;
+            toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+        }
+        runCommands(index);
+        return index;
+    }
+
+    public String getCommands(){
+        String input = "The available commands are  ";
+
+        for (int i =0; i<commands.length-1; i++){
+            input += commands[i];
+            input +=" ";
+        }
+        return input;
+    }
+
+    // Mono auto allazeis
+    public void runCommands(int index){
+        if(index == 0){
+            openStove(stoveButtons[0]);
+        }else if(index == 1){
+            closeStove(stoveButtons[0]);
+        }else if(index == 2){
+            openStove(stoveButtons[1]);
+        }else if(index == 3){
+            openBigStove(stoveButtons[1]);
+        }else if(index == 4){
+            closeStove(stoveButtons[1]);
+        }else if(index == 5){
+            openStove(stoveButtons[2]);
+        }else if(index == 6){
+            openBigStove(stoveButtons[2]);
+        }else if(index == 7){
+            closeStove(stoveButtons[2]);
+        }else if(index == 8){
+            openStove(stoveButtons[3]);
+        }else if(index == 9){
+            closeStove(stoveButtons[3]);
+        }else if(index >= 10 && index <= 19){
+            int pos = index - 10;
+            stoveButtons[0].setHeatLevel(pos);
+        }else if(index >= 20 && index <= 29){
+            int pos = index - 20;
+            stoveButtons[1].setHeatLevel(pos);
+        }else if(index >= 30 && index <= 39){
+            int pos = index - 30;
+            stoveButtons[2].setHeatLevel(pos);
+        }else if(index >= 40 && index <= 49){
+            int pos = index - 40;
+            stoveButtons[3].setHeatLevel(pos);
+        }
+    }
+
+    public int isValidCommand(String result){
+        int index = -1;
+        int i = 0;
+        for(String command: commands){
+            String temp = command
+                    .replace("1", "one")
+                    .replace("2", "two")
+                    .replace("3", "three")
+                    .replace("4", "four")
+                    .replace("5", "five")
+                    .replace("6", "six")
+                    .replace("7", "seven")
+                    .replace("8", "eight")
+                    .replace("9", "nine")
+                    .replace("lift", "left")
+                    .replace("sad", "set")
+                    .replace("said", "set");
+            if(temp.equalsIgnoreCase(result)){
+                index = i;
+            }
+            i++;
+        }
+        return index;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+        toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+
+        toSpeech.shutdown();
     }
 }
 
