@@ -29,16 +29,22 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import static android.content.ContentValues.TAG;
 
 public class WholeKitchen extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
+    private int posInt = -3;
+    private int number;
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
     private boolean performingSpeechSetup;
     private TextToSpeech toSpeech;
     private String result;
+
+    private boolean permissionDialogIsOpen;
+
     // Show me commands na einai panta to teleutaio
     private String[] commands = {
             "yes",
@@ -53,7 +59,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             "Starting the stove",
             "Starting the oven",
             "I'm sorry i can't do that"};
-    private TextToSpeech textToSpeechClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,17 +122,17 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("firsttime", false);
                 editor.apply();
+
                 Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
                 startActivity(openTutorialIntent);
             }
         }
-        Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
-        startActivity(openTutorialIntent);
     }
 
     private void requestRecordAudioPermission() {
         if (ActivityCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                permissionDialogIsOpen = true;
                 String[] permissions = new String[]{Manifest.permission.RECORD_AUDIO};
                 requestPermissions(permissions,88);
             }
@@ -189,14 +194,18 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
+        if(permissionDialogIsOpen){
+            permissionDialogIsOpen = false;
+            return;
+        }
         requestRecordAudioPermission();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.help_button){
-            if(textToSpeechClient != null){
-                textToSpeechClient.speak(
+            if(toSpeech != null){
+                toSpeech.speak(
                         getResources().getString(R.string.general_info),
                         TextToSpeech.QUEUE_FLUSH,
                         null);
@@ -324,26 +333,79 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     public int checkCommands(String result){
         System.out.println(result);
         int index = isValidCommand(result);
-        System.out.println(index);
-        System.out.println(commands.length-1);
         HashMap<String, String> myHashAlarm = new HashMap<>();
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
         // Here it speaks
+        System.out.println(index + " pos: " + posInt);
         if ( index==commands.length-1){
             toSpeech.setSpeechRate(0.8f);
             toSpeech.speak(getCommands(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
             toSpeech.setSpeechRate(1.0f);
-
-        }else if(index != -1){
+        }else if(index == posInt){
+            number = getNumber(result);
+            toSpeech.speak(responses[index] + number, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+        }
+        else if(index != -1){
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-
         }
         else{
             index = responses.length -1;
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }
         runCommands(index);
+        return index;
+    }
+
+    public int getNumber(String command){
+        StringTokenizer str = new StringTokenizer(command);
+        int number = -1;
+        int i = 0;
+        int pos = str.countTokens() -2;
+        while (str.hasMoreTokens()){
+            if (i!=pos){
+                str.nextToken();
+            }else {
+                try{
+                    number = Integer.parseInt(str.nextToken());
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                    return -3;
+                }
+            }
+        }
+        return number;
+    }
+
+    public String getNewCommand(String command ,int number){
+        return command.replace(Integer.toString(number),"");
+    }
+
+    public int isValidCommand(String result){
+        int index;
+        int i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(result)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
+
+        int tempature = getNumber(result);
+        if(tempature < 0) return -1;
+
+        String newCommand = getNewCommand(result,tempature);
+        index = -1;
+
+        i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(newCommand)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
         return index;
     }
 
@@ -415,17 +477,5 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             }
 
         }
-    }
-
-    public int isValidCommand(String result){
-        int index = -1;
-        int i = 0;
-        for(String command: commands){
-            if(command.equalsIgnoreCase(result)){
-                index = i;
-            }
-            i++;
-        }
-        return index;
     }
 }
