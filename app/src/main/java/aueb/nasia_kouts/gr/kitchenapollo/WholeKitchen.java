@@ -26,9 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -64,19 +61,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_whole_kitchen);
 
         setUpSharedPreferences();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean firsttime = sharedPreferences.getBoolean("firsttime",true);
-        if (firsttime){
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("firsttime", false);
-            Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
-            startActivity(openTutorialIntent);
-        }
-
     }
-
-
 
     public void initializeSpeechClient(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -126,26 +111,16 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode==88){
-            if(grantResults.length>0){
-                textToSpeechClient = new TextToSpeech(WholeKitchen.this, new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int i) {
-                        if (i == TextToSpeech.SUCCESS) {
-                            textToSpeechClient.setLanguage(Locale.US);
-
-                            textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
-                            SystemClock.sleep(3000);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                initializeSpeechClient();
-            }else {
-
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean firsttime = sharedPreferences.getBoolean("firsttime",true);
+            if (firsttime){
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("firsttime", false);
+                editor.apply();
+                Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
+                startActivity(openTutorialIntent);
             }
         }
-        //initializeSpeechClient();
         Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
         startActivity(openTutorialIntent);
     }
@@ -214,11 +189,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean firsttime = sharedPreferences.getBoolean("firsttime",true);
-        if (!firsttime){
-            requestRecordAudioPermission();
-        }
+        requestRecordAudioPermission();
     }
 
     @Override
