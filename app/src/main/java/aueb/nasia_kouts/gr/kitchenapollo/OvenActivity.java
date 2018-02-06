@@ -57,11 +57,16 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
 
     int alertMinutes;
 
+    private int number;
+    private int posInt = 9;
+
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
     private boolean performingSpeechSetup;
     private TextToSpeech toSpeech;
     private String result;
+
+    IconicsImageButton camera;
 
     private String[] commands = {
             "select light mode",
@@ -73,6 +78,8 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
             "close selected mode",
             "start stove",
             "start oven",
+            "set oven temperature to degrees",
+            "help",
             "Show me Commands"
     };
     // responses to commands
@@ -86,6 +93,8 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
             "selected mode closed",
             "starting stove",
             "oven is already opened, I am waiting for your next command",
+            "oven temperature has been set to ",
+            "",
             "I'm sorry i can't do that"};
 
     @Override
@@ -98,6 +107,8 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         }
 
         setUpSharedPreferences();
+
+        responses[10] = getString(R.string.stove_info);
 
         ovenTemp = findViewById(R.id.temperature_controller);
         tempTextView = findViewById(R.id.temperature_text);
@@ -158,6 +169,14 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
                 }
             }
         }
+
+        camera = findViewById(R.id.camera);
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Now you are going to see what is going on your oven", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void initializeSpeechClient(){
@@ -215,6 +234,10 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         final NumberPicker picker = viewInflated.findViewById(R.id.number_picker);
         final CheckBox closeStoveStoveAfter = viewInflated.findViewById(R.id.close_stove_after_time);
         closeStoveStoveAfter.setText("Close oven when time exceed");
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firsttime = sharedPreferences.getBoolean(getString(R.string.pref_auto_close_oven_key),false);
+        closeStoveStoveAfter.setChecked(firsttime);
 
         picker.setValue(startValue);
 
@@ -328,6 +351,9 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(openSettingsIntent);
                 return true;
+            case R.id.help_button:
+                toSpeech.speak(getString(R.string.general_info), TextToSpeech.QUEUE_FLUSH, null);
+                SystemClock.sleep(5000);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -354,6 +380,28 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
             }
         }
     }
+
+    private void selectMode(View view){
+        if(openedMode != null){
+            openedMode.setScaleX(openedMode.getScaleX()*(2F/3));
+            openedMode.setScaleY(openedMode.getScaleY()*(2F/3));
+
+            if(view.getId() == openedMode.getId()){
+                openedMode = null;
+                ovenTemp.setProgress(0);
+            }else{
+                openedMode = (ImageView)view;
+                openedMode.setScaleX(1.5F);
+                openedMode.setScaleY(1.5F);
+            }
+        }else{
+            openedMode = (ImageView)view;
+            openedMode.setScaleX(1.5F);
+            openedMode.setScaleY(1.5F);
+        }
+        updateLabel();
+    }
+
 
     private class OvenModeOnClickListener implements View.OnClickListener{
         @Override
@@ -508,9 +556,12 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
             mSpeechRecognizer.cancel();
 
             // TODO: 5/2/2018 Here is where you pass the result of the speech
-            if(checkCommands(result)==commands.length-1){
+            if(checkCommands(result) == commands.length-1){
                 SystemClock.sleep(3500);
-            }else {
+            }
+            if(checkCommands(result) == 10){
+                SystemClock.sleep(5000);
+            }else{
                 SystemClock.sleep(2500);
             }
             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
@@ -525,26 +576,86 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
     public int checkCommands(String result){
         System.out.println(result);
         int index = isValidCommand(result);
-        System.out.println(index);
-        System.out.println(commands.length-1);
         HashMap<String, String> myHashAlarm = new HashMap<>();
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SOME MESSAGE");
         // Here it speaks
-        if ( index==commands.length-1){
+        System.out.println(index + " pos: " + posInt);
+        if (index==commands.length-1){
             toSpeech.setSpeechRate(0.8f);
             toSpeech.speak(getCommands(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
             toSpeech.setSpeechRate(1.0f);
-
-        }else if(index != -1){
+        }else if(index == posInt){
+            number = getNumber(result);
+            toSpeech.speak(responses[index] + number, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+        }
+        else if(index != -1){
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-
         }
         else{
             index = responses.length -1;
             toSpeech.speak(responses[index], TextToSpeech.QUEUE_FLUSH, myHashAlarm);
         }
         runCommands(index);
+        return index;
+    }
+
+    public int getNumber(String command){
+        StringTokenizer str = new StringTokenizer(command);
+        int number = -1;
+        int i = 0;
+        int pos = str.countTokens() - 2;
+        while (str.hasMoreTokens()){
+            if (i!=pos){
+                str.nextToken();
+            }else {
+                try{
+                    number = Integer.parseInt(str.nextToken());
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                    return -3;
+                }
+            }
+            i++;
+        }
+        return number;
+    }
+
+    public String getNewCommand(String command ,int number){
+        StringTokenizer st = new StringTokenizer(command.replace(Integer.toString(number),""));
+        StringBuilder string = new StringBuilder();
+        while (st.hasMoreTokens()){
+            string.append(st.nextToken() + " ");
+        }
+        return string.toString().substring(0, string.toString().length()-1);
+    }
+
+    public int isValidCommand(String result){
+        int index;
+        int i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(result)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
+
+        int tempature = getNumber(result);
+        System.out.println(tempature);
+        if(tempature < 0) return -1;
+
+        String newCommand = getNewCommand(result,tempature);
+        index = -1;
+        System.out.println("new "+newCommand);
+        i = 0;
+        for(String command: commands){
+            if(command.equalsIgnoreCase(newCommand)){
+                index = i;
+                return index;
+            }
+            i++;
+        }
         return index;
     }
 
@@ -558,21 +669,30 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         return input;
     }
 
+
     // Mono auto allazeis
     public void runCommands(int index){
-
-    }
-
-    public int isValidCommand(String result){
-        int index = -1;
-        int i = 0;
-        for(String command: commands){
-            if(command.equalsIgnoreCase(result)){
-                index = i;
+        if(index <= 5){
+            selectMode(ovenModesImageView[index]);
+        }else if(index == 6){
+            openedMode.setScaleX(openedMode.getScaleX()*(2F/3));
+            openedMode.setScaleY(openedMode.getScaleY()*(2F/3));
+            openedMode = null;
+            ovenTemp.setProgress(0);
+            updateLabel();
+        }else if(index == 7){
+            Intent openStoveIntent = new Intent(this, StoveActivity.class);
+            startActivity(openStoveIntent);
+        }else if(index == 9){
+            System.out.println(number + " NUMBER");
+            ovenTemp.setProgress(number);
+            if(number == 0 && openedMode != null){
+                openedMode.setScaleX(openedMode.getScaleX()*(2F/3));
+                openedMode.setScaleY(openedMode.getScaleY()*(2F/3));
+                openedMode = null;
+                updateLabel();
             }
-            i++;
         }
-        return index;
     }
 
     @Override
@@ -583,7 +703,9 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
         }
-        toSpeech.shutdown();
+        if(toSpeech != null){
+            toSpeech.shutdown();
+        }
     }
 
     @Override
@@ -591,19 +713,10 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         super.onStop();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();
+            SystemClock.sleep(500);
         }
-
-        toSpeech.shutdown();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        super.onStop();
-        if(mSpeechRecognizer != null){
-            mSpeechRecognizer.destroy();
+        if(toSpeech != null){
+            toSpeech.shutdown();
         }
-
-        toSpeech.shutdown();
     }
 }
