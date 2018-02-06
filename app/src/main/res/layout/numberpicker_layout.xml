@@ -18,7 +18,7 @@
     <com.mikepenz.iconics.view.IconicsImageButton
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:id="@+id/increment_alert"
+        android:id="@+id/increment"
         android:background="@android:color/transparent"
         app:iiv_background_color="@android:color/transparent"
         app:iiv_background_contour_color="@android:color/transparent"
@@ -28,7 +28,7 @@
     <com.mikepenz.iconics.view.IconicsImageButton
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:id="@+id/decrement_alert"
+        android:id="@+id/decrement"
         android:background="@android:color/transparent"
         app:iiv_background_color="@android:color/transparent"
         app:iiv_background_contour_color="@android:color/transparent"

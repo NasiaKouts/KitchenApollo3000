@@ -12,7 +12,7 @@
         numberpicker:min="0"
         numberpicker:max="360"
         numberpicker:unit="1"
-        numberpicker:focusable="false"/>
+        numberpicker:focusable="true"/>
 
     <CheckBox
         android:id="@+id/close_stove_after_time"

@@ -14,8 +14,10 @@
             android:id="@+id/ib_kitchen_Up"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:padding="20dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/stove"
+            android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:onClick="openStoveActivity"
             android:contentDescription="Press to open the stove options"
@@ -24,16 +26,18 @@
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:padding="8dp"
-            android:background="@color/primary_dark"/>
+            android:background="@color/primary_light"/>
 
         <ImageButton
             android:id="@+id/ib_oven"
+            android:padding="16dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/oven"
+            android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:onClick="openOvenActivity"
             android:contentDescription="Press to open the oven options"/>
