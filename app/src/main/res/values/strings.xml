@@ -2,8 +2,12 @@
     <string name="app_name">KitchenApollo</string>
     <string name="title_activity_stove">Stove</string>
     <string name="title_activity_settings">Settings</string>
+
+    <!-- Menu xml -->
     <string name="help">Help</string>
     <string name="settings">Settings</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="finish">Finish</string>
 
 
     <!-- Preferences -->
