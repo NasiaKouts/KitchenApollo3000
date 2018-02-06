@@ -62,13 +62,30 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
     private boolean performingSpeechSetup;
     private TextToSpeech toSpeech;
     private String result;
-    // Show me commands na einai panta to teleutaio
+
     private String[] commands = {
-            //"Open ",
+            "select light mode",
+            "select fan mode",
+            "select bottom only heat mode",
+            "select both heat mode",
+            "select grill and heat mode",
+            "select unfreeze mode",
+            "close selected mode",
+            "start stove",
+            "start oven",
             "Show me Commands"
     };
     // responses to commands
     private String[] responses = {
+            "light mode selected",
+            "fan mode selected",
+            "bottom only heat mode selected",
+            "both heat mode selected",
+            "grill and heat mode selected",
+            "unfreeze mode selected",
+            "selected mode closed",
+            "starting stove",
+            "oven is already opened, I am waiting for your next command",
             "I'm sorry i can't do that"};
 
     @Override

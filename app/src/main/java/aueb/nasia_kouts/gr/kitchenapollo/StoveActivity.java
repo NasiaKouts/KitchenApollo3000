@@ -105,6 +105,8 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             "set right bottom heat level to seven",
             "set right bottom heat level to eight",
             "set right bottom heat level to nine",
+            "start stove",
+            "start oven",
             "Show me Commands"
     };
     // responses to commands
@@ -159,6 +161,8 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             "right bottom heat level has been set to seven",
             "right bottom heat level has been set to eight",
             "right bottom heat level has been set to nine",
+            "stove is already opened, I am waiting for your next command",
+            "starting oven",
             "I'm sorry i can't do that"};
 
     @Override
@@ -761,6 +765,10 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
         }else if(index >= 40 && index <= 49){
             int pos = index - 40;
             stoveButtons[3].setHeatLevel(pos);
+        }
+        else if(index == 51){
+            Intent openOvenIntent = new Intent(this, OvenActivity.class);
+            startActivity(openOvenIntent);
         }
     }
 

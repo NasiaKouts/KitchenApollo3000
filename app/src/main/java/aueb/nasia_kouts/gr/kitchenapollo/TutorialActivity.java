@@ -57,13 +57,8 @@ public class TutorialActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-            case R.id.settings_button:
-                Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(openSettingsIntent);
+            case R.id.finish_button:
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -71,7 +66,7 @@ public class TutorialActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.tutorial_menu, menu);
         return true;
     }
 }

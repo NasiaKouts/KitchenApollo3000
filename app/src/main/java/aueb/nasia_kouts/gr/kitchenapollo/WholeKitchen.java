@@ -233,6 +233,9 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }else if(item.getItemId() == R.id.settings_button){
             Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(openSettingsIntent);
+        }else if(item.getItemId() == R.id.tutorial_button){
+            Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
+            startActivity(openTutorialIntent);
         }
         return true;
     }
@@ -407,6 +410,10 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 break;
             }
             case 2:
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                toSpeech.shutdown();
                 Intent openStoveIntent = new Intent(this, StoveActivity.class);
                 if(mSpeechRecognizer != null){
                     mSpeechRecognizer.destroy();
@@ -417,6 +424,10 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 startActivity(openStoveIntent);
                 break;
             case 3:
+                if(mSpeechRecognizer != null){
+                    mSpeechRecognizer.destroy();
+                }
+                toSpeech.shutdown();
                 Intent openOvenIntent = new Intent(this, OvenActivity.class);
                 if(mSpeechRecognizer != null){
                     mSpeechRecognizer.destroy();
