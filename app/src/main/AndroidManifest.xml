@@ -41,13 +41,8 @@
         <activity android:name=".SettingsActivity" />
         <activity
             android:name=".TutorialActivity"
-            android:label="@string/title_activity_stove"
-            android:parentActivityName=".WholeKitchen">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".WholeKitchen" />
+            android:label="@string/title_activity_stove"/>
 
-        </activity>
     </application>
 
 </manifest>

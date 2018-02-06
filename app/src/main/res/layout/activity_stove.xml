@@ -122,4 +122,19 @@
             app:layout_constraintStart_toEndOf="@+id/ib_stove_rightbottom"
             app:layout_constraintEnd_toStartOf="@id/ib_stove_rightbottom"
             app:layout_constraintTop_toTopOf="@id/buttons_leftbottom" />
+
+    <com.mikepenz.iconics.view.IconicsImageButton
+        android:id="@+id/camera"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Press to see the oven inside camera view"
+        app:iiv_background_color="@android:color/transparent"
+        app:iiv_background_contour_color="@android:color/transparent"
+        app:iiv_color="@android:color/holo_green_dark"
+        app:iiv_icon="gmd-play_circle_outline"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"/>
 </android.support.constraint.ConstraintLayout>
