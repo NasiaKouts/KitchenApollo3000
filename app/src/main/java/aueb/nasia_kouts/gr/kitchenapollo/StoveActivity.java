@@ -115,9 +115,9 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
             "right top big stove opened",
             "right top stove closed",
             "left bottom stove opened",
+            "left bottom big stove opened",
             "left bottom stove closed",
             "right bottom stove opened",
-            "right bottom big stove opened",
             "right bottom stove closed",
             "left top heat level has been set to zero",
             "left top heat level has been set to one",
@@ -228,6 +228,27 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
         countDownTimers = new CountDownTimer[4];
 
+        initializeSpeechClient();
+    }
+
+    public void initializeSpeechClient(){
+        SystemClock.sleep(1000);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+        if(!speechEnabled) return;
+
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizer.setRecognitionListener(new StoveActivity.SpeechRecognitionListener());
+
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
         // This is for reading the input
         toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -254,27 +275,6 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
                 }
             }
         });
-
-        initializeSpeechClient();
-    }
-
-    public void initializeSpeechClient(){
-        SystemClock.sleep(1000);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
-        if(!speechEnabled) return;
-
-        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        performingSpeechSetup = true;
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizer.setRecognitionListener(new StoveActivity.SpeechRecognitionListener());
-
-        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
     }
 
     @Override
@@ -678,9 +678,9 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
             // TODO: 5/2/2018 Here is where you pass the result of the speech
             if(checkCommands(result)==commands.length-1){
-                SystemClock.sleep(4500);
+                SystemClock.sleep(3500);
             }else {
-                SystemClock.sleep(4000);
+                SystemClock.sleep(2500);
             }
             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
         }
@@ -802,6 +802,17 @@ public class StoveActivity extends AppCompatActivity implements SharedPreference
 
     @Override
     protected void onStop() {
+        super.onStop();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+
+        toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         super.onStop();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();

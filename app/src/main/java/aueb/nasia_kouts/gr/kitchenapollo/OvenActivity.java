@@ -64,6 +64,7 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
     private String result;
     // Show me commands na einai panta to teleutaio
     private String[] commands = {
+            //"Open ",
             "Show me Commands"
     };
     // responses to commands
@@ -122,33 +123,6 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        // This is for reading the input
-        toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    toSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onDone(String utteranceId) {
-                            Log.d("MainActivity", "TTS finished");
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                        }
-
-                        @Override
-                        public void onStart(String utteranceId) {
-                            Log.d("MainActivity", "On start");
-
-                        }
-                    });
-                } else {
-                    Log.e("MainActivity", "Initilization Failed!");
-                }
-            }
-        });
-
         initializeSpeechClient();
       
         if(savedInstanceState != null){
@@ -185,6 +159,33 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         mSpeechRecognizer.setRecognitionListener(new OvenActivity.SpeechRecognitionListener());
 
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+        // This is for reading the input
+        toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    toSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                            Log.d("MainActivity", "TTS finished");
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onStart(String utteranceId) {
+                            Log.d("MainActivity", "On start");
+
+                        }
+                    });
+                } else {
+                    Log.e("MainActivity", "Initilization Failed!");
+                }
+            }
+        });
     }
 
     private void openAlertCountDownBuilder(final int startValue, final boolean openForEdit){
@@ -478,24 +479,22 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
         @Override
         public void onReadyForSpeech(Bundle params)
         {
-            Log.d(TAG, "onReadyForSpeech"); //$NON-NLS-1$
+            Log.d(TAG, "onReadyForSpeech");
         }
 
         @Override
         public void onResults(Bundle results)
         {
-            Log.d(TAG, "onResults"); //$NON-NLS-1$
+            Log.d(TAG, "onResults");
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            // matches are the return values of speech recognition engine
-            // Use these values for whatever you wish to do
             result = matches.get(0);
             mSpeechRecognizer.cancel();
 
             // TODO: 5/2/2018 Here is where you pass the result of the speech
             if(checkCommands(result)==commands.length-1){
-                SystemClock.sleep(4500);
+                SystemClock.sleep(3500);
             }else {
-                SystemClock.sleep(3000);
+                SystemClock.sleep(2500);
             }
             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
         }
@@ -572,6 +571,17 @@ public class OvenActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onStop() {
+        super.onStop();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+
+        toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         super.onStop();
         if(mSpeechRecognizer != null){
             mSpeechRecognizer.destroy();

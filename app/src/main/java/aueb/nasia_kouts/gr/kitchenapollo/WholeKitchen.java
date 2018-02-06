@@ -66,6 +66,24 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
         // This is for getting the input
         requestRecordAudioPermission();
+    }
+
+    public void initializeSpeechClient(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
+        if(!speechEnabled) return;
+
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        performingSpeechSetup = true;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
+        mSpeechRecognizer.setRecognitionListener(new WholeKitchen.SpeechRecognitionListener());
+
+        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
         // This is for reading the input
         toSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -95,24 +113,6 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         });
     }
 
-    public void initializeSpeechClient(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean speechEnabled = sharedPreferences.getBoolean(getString(R.string.pref_speech_enabled_key), true);
-        if(!speechEnabled) return;
-
-        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        performingSpeechSetup = true;
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.UK);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 300000);
-        mSpeechRecognizer.setRecognitionListener(new WholeKitchen.SpeechRecognitionListener());
-
-        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -123,13 +123,15 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                     textToSpeechClient.setLanguage(Locale.US);
 
                     textToSpeechClient.speak("Do you want any speak assistance?", TextToSpeech.QUEUE_FLUSH, null);
-                    SystemClock.sleep(4500);
+                    SystemClock.sleep(3000);
                 } else {
                     Toast.makeText(getApplicationContext(), "Text to speech is not enabled", Toast.LENGTH_LONG).show();
                 }
             }
         });
-        initializeSpeechClient();
+        //initializeSpeechClient();
+        Intent openTutorialIntent = new Intent(this, TutorialActivity.class);
+        startActivity(openTutorialIntent);
     }
 
     private void requestRecordAudioPermission() {
@@ -141,7 +143,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
             if (checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_DENIED) {
                 requestPermissions(new String[]{requiredPermission}, 101);
             }else{
-                initializeSpeechClient();
+                //initializeSpeechClient();
             }
         }
     }
@@ -190,6 +192,22 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         }
 
         toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mSpeechRecognizer != null){
+            mSpeechRecognizer.destroy();
+        }
+
+        toSpeech.shutdown();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeSpeechClient();
     }
 
     @Override
@@ -305,9 +323,9 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
 
             // TODO: 5/2/2018 Here is where you pass the result of the speech
             if(checkCommands(result)==commands.length-1){
-                SystemClock.sleep(4500);
+                SystemClock.sleep(3500);
             }else {
-                SystemClock.sleep(3000);
+                SystemClock.sleep(2000);
             }
             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
         }
