@@ -1,11 +1,14 @@
 package aueb.nasia_kouts.gr.kitchenapollo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.synnapps.carouselview.CarouselView;
@@ -34,6 +37,17 @@ public class TutorialActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public void yesButton(View view){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("Hasaudio", true);
+        Intent openWholeKitchen = new Intent(this, WholeKitchen.class);
+        startActivity(openWholeKitchen);
+
+    }
+
 
     @Override
     public void onBackPressed() {
