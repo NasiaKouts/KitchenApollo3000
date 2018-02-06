@@ -254,6 +254,7 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
         public void onEndOfSpeech()
         {
             Log.d(TAG, "onEndOfSpeech");
+
         }
 
         @Override
@@ -441,31 +442,11 @@ public class WholeKitchen extends AppCompatActivity implements SharedPreferences
                 break;
             }
             case 2:
-                if(mSpeechRecognizer != null){
-                    mSpeechRecognizer.destroy();
-                }
-                toSpeech.shutdown();
                 Intent openStoveIntent = new Intent(this, StoveActivity.class);
-                if(mSpeechRecognizer != null){
-                    mSpeechRecognizer.destroy();
-                }
-                if (toSpeech != null){
-                    toSpeech.shutdown();
-                }
                 startActivity(openStoveIntent);
                 break;
             case 3:
-                if(mSpeechRecognizer != null){
-                    mSpeechRecognizer.destroy();
-                }
-                toSpeech.shutdown();
                 Intent openOvenIntent = new Intent(this, OvenActivity.class);
-                if(mSpeechRecognizer != null){
-                    mSpeechRecognizer.destroy();
-                }
-                if (toSpeech != null){
-                    toSpeech.shutdown();
-                }
                 startActivity(openOvenIntent);
                 break;
             case 4:{
